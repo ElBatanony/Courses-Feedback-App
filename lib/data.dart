@@ -21,8 +21,10 @@ class TA {
 
 List<Year> stubYears = [
   Year('Bach-17', 'BS17', [
-    Course('Mobile Development', 'MAD', [TA('Tony Stark'), TA('Batman')]),
-    Course('Academic Writing', 'AWRC', [TA('The Flash'), TA('Captain Russia')])
+    Course('Mobile Application Development', '[F20]MAD',
+        [TA('Tony Stark'), TA('Batman')]),
+    Course('Academic Writing and Research Culture l', '[F20]AW&RC_1',
+        [TA('The Flash'), TA('Captain Russia')])
   ]),
   Year('Masters-18', 'MS18', [
     Course('Machine Learning', 'ML', [TA('Electro'), TA('Machine Monster')])
