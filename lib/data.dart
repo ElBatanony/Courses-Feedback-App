@@ -1,3 +1,5 @@
+import 'stub/data.dart';
+
 class Year {
   String name;
   String code;
@@ -15,23 +17,22 @@ class Course {
 }
 
 class TA {
+  String id;
   String name;
-  TA(this.name);
+  // TODO: add issues
+  // TODO: add rating
+  // TODO: add courses
+  TA(this.id, this.name);
 }
 
-List<Year> stubYears = [
-  Year('Bach-17', 'BS17', [
-    Course('Mobile Application Development', '[F20]MAD',
-        [TA('Tony Stark'), TA('Batman')]),
-    Course('Academic Writing and Research Culture l', '[F20]AW&RC_1',
-        [TA('The Flash'), TA('Captain Russia')])
-  ]),
-  Year('Masters-18', 'MS18', [
-    Course('Machine Learning', 'ML', [TA('Electro'), TA('Machine Monster')])
-  ])
-];
-
 Future<List<Year>> getYears() {
+  // TODO: Fetch years from db
   return Future<List<Year>>.delayed(
       Duration(milliseconds: 1000), () => stubYears);
+}
+
+Future<TA> fetchTA(String taId) {
+  // TODO: Fetch TA from db
+  return Future<TA>.delayed(Duration(milliseconds: 1000),
+      () => stubTAs.firstWhere((ta) => ta.id == taId));
 }
