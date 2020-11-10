@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'ta_profile_page.dart';
+
 import 'data.dart';
 
 void main() {
@@ -65,7 +67,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   selectTA(TA ta) {
     print('Selected TA: ' + ta.name);
-    // TODO: Implement a TA page
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => TaProfilePage(ta.id, ta.name)));
   }
 
   Widget yearItemBuilder(Year year) {
