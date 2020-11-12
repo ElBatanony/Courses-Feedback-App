@@ -6,14 +6,13 @@ import 'ta_profile_page.dart';
 
 import 'data.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,17 +20,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: FutureBuilder(
-          future: _initialization,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) return Text('Error initializing Firebase');
-
-            if (snapshot.connectionState == ConnectionState.done)
-              return MyHomePage();
-
-            return Text('Loading Firebase ...');
-          },
-        ));
+        home: MyHomePage());
   }
 }
 
