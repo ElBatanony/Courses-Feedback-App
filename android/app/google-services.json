@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "887654636316",
+    "firebase_url": "https://innopolis-feedback.firebaseio.com",
+    "project_id": "innopolis-feedback",
+    "storage_bucket": "innopolis-feedback.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:887654636316:android:4fc5c7c9035562bfcbb8d9",
+        "android_client_info": {
+          "package_name": "app.innopolis.feedback"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "887654636316-f5ug3ck07941co8pcc5qcvbtsvri9ufg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQfU7dK27nQWr9Ocu_75ls1Gc9ZaYrf28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "887654636316-f5ug3ck07941co8pcc5qcvbtsvri9ufg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
