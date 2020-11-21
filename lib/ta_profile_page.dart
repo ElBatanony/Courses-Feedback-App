@@ -23,7 +23,7 @@ class _TaProfilePageState extends State<TaProfilePage> {
         ),
         body: Center(
           child: FutureBuilder(
-            future: fetchTA(widget.taId),
+            future: getTaById(widget.taId),
             builder: (context, snapshot) {
               if (snapshot.hasError)
                 return Text('Error fetching TA: ' + snapshot.error.toString());
