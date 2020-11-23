@@ -15,45 +15,59 @@ class TaProfilePage extends StatefulWidget {
 class _TaProfilePageState extends State<TaProfilePage> {
   TA ta;
 
+  List<Course> courses = [];
+
+  getTA() async {
+    ta = await getTaById(widget.taId);
+    setState(() {});
+    getCourses();
+  }
+
+  getCourses() async {
+    courses = await getCoursesByTA(ta);
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    getTA();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('TA - ' + widget.taName),
-        ),
-        body: Center(
-          child: FutureBuilder(
-            future: fetchTA(widget.taId),
-            builder: (context, snapshot) {
-              if (snapshot.hasError)
-                return Text('Error fetching TA: ' + snapshot.error.toString());
-
-              if (snapshot.hasData) {
-                if (snapshot.data == null) return Text("Can't find data on TA");
-
-                ta = snapshot.data;
-
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('ID: ' + ta.id),
-                    Text('Name: ' + ta.name),
-                    Text('Rating: unimplemented/5'),
-                    displayCourses(ta),
-                    displayIssues(ta)
-                  ],
-                );
-              }
-
-              return Text('Loading ...');
-            },
-          ),
-        ));
+      appBar: AppBar(
+        title: Text('TA - ' + widget.taName),
+      ),
+      body: Center(
+        child: ta != null
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('ID: ' + ta.id),
+                  Text('Name: ' + ta.name),
+                  Text('Rating: unimplemented/5'),
+                  displayCourses(courses),
+                  displayIssues(ta)
+                ],
+              )
+            : Text('Loading ...'),
+      ),
+    );
   }
 }
 
-Widget displayCourses(TA ta) {
-  return Text('Multiple courses per TA not implemented');
+Widget displayCourses(List<Course> courses) {
+  return Column(children: [
+    Text('Courses:'),
+    ...courses
+        .map((course) => ListTile(
+              title: Text(course.name),
+              subtitle: Text(course.yearId),
+            ))
+        .toList()
+  ]);
 }
 
 Widget displayIssues(TA ta) {

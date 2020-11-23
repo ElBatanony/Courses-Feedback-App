@@ -55,20 +55,21 @@ class _MyHomePageState extends State<MyHomePage> {
       });
   }
 
-  selectYear(Year year) {
+  selectYear(Year year) async {
     print('Selected year: ' + year.name);
+    currentList = await getCoursesByYear(year);
     setState(() {
       selectedYear = year;
-      currentList = year.courses;
       currentBuilder = courseItemBuilder;
     });
   }
 
-  selectCourse(Course course) {
+  selectCourse(Course course) async {
     print('Selected course: ' + course.name);
+
+    currentList = await getTAs(course);
     setState(() {
       selectedCourse = course;
-      currentList = course.tas;
       currentBuilder = taItemBuilder;
     });
   }
@@ -129,8 +130,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         itemBuilder: (context, index) =>
                             currentBuilder(currentList[index]));
                   }
-                  if (snapshot.hasError)
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
                     return Text('Oops! Something went wrong :(');
+                  }
                   return Text('Loading ...');
                 },
               ),
