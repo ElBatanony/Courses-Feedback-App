@@ -24,6 +24,14 @@ class TA {
   TA(this.name, this.id);
 }
 
+class TaCourse {
+  String taId;
+  String courseId;
+  double rating;
+
+  TaCourse(this.taId, this.courseId, this.rating);
+}
+
 List<String> courseTaIds(dynamic courseData) {
   return (courseData['tas'] as List).map((e) => e.toString()).toList();
 }
@@ -91,5 +99,27 @@ Future<TA> getTaById(String taId) {
   return db.collection('tas').doc(taId).get().then((taDoc) {
     var taData = taDoc.data();
     return new TA(taData['name'], taDoc.id);
+  });
+}
+
+Future<Course> getCourseById(String courseId) {
+  return db.collection('courses').doc(courseId).get().then((courseDoc) {
+    var courseData = courseDoc.data();
+    var courseTas = courseTaIds(courseData);
+    return new Course(
+        courseData['name'], courseDoc.id, courseData['yearId'], courseTas);
+  });
+}
+
+Future<TaCourse> getTaCoursePair(String docId) {
+  return db.collection('ta-course').doc(docId).get().then((doc) {
+    if (doc.exists == false) {
+      return null;
+    }
+
+    var docData = doc.data();
+
+    return new TaCourse(docData['taId'] ?? 'no TA ID',
+        docData['courseId'] ?? 'no Course ID', docData['rating'] ?? -1);
   });
 }
