@@ -5,6 +5,7 @@ final FirebaseFirestore db = FirebaseFirestore.instance;
 class Year {
   String name;
   String id;
+
   Year(this.name, this.id);
 }
 
@@ -13,12 +14,24 @@ class Course {
   String id;
   String yearId;
   List<String> taIds;
+
   Course(this.name, this.id, this.yearId, this.taIds);
+}
+
+class Student {
+  String id;
+  String name;
+  String yearId;
+
+  // TODO: add issues
+  // TODO: add feedback, up/down votes, representatives, comments and stuff that we will  have time for
+  Student(this.id, this.name, this.yearId);
 }
 
 class TA {
   String id;
   String name;
+
   // TODO: add issues
   // TODO: add rating
   TA(this.name, this.id);
