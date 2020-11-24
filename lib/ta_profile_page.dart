@@ -29,7 +29,7 @@ class _TaProfilePageState extends State<TaProfilePage> {
     setState(() {});
   }
 
-  selectedCourse(Course course) async {
+  selectCourse(Course course) async {
     String title = ta.name + ' - ' + course.name;
     await Navigator.push(
         context,
@@ -57,7 +57,7 @@ class _TaProfilePageState extends State<TaProfilePage> {
                   Text('ID: ' + ta.id),
                   Text('Name: ' + ta.name),
                   Text('Rating: unimplemented/5'),
-                  displayCourses(courses, selectedCourse),
+                  displayCourses(courses, selectCourse),
                   displayIssues(ta)
                 ],
               )
@@ -67,14 +67,14 @@ class _TaProfilePageState extends State<TaProfilePage> {
   }
 }
 
-Widget displayCourses(List<Course> courses, Function selectedCourse) {
+Widget displayCourses(List<Course> courses, Function selectCourse) {
   return Column(children: [
     Text('Courses:'),
     ...courses
         .map((course) => ListTile(
               title: Text(course.name),
               subtitle: Text(course.yearId),
-              onTap: () => selectedCourse(course),
+              onTap: () => selectCourse(course),
             ))
         .toList()
   ]);
