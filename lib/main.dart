@@ -1,15 +1,14 @@
-import 'package:flutter/material.dart';
-
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:innopolis_feedback/screens/wrapper.dart';
+import 'package:innopolis_feedback/services/auth.dart';
+import 'package:innopolis_feedback/shared/loading.dart';
+import 'package:provider/provider.dart';
 
 import 'ta_profile_page.dart';
 
 import 'data.dart';
-
-final FirebaseAuth auth = FirebaseAuth.instance;
-final FirebaseFirestore db = FirebaseFirestore.instance;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,12 +19,16 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Innopolis Feedback',
-        theme: ThemeData(
-          primarySwatch: Colors.green,
+    return StreamProvider<User>.value(
+        value: AuthService().user,
+        child: MaterialApp(
+          home: Wrapper(),
+          title: 'Innopolis Feedback',
+          theme: ThemeData(
+            primarySwatch: Colors.green,
+          ),
         ),
-        home: MyHomePage());
+    );
   }
 }
 
@@ -106,6 +109,13 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Innopolis Feedback'),
+          actions: <Widget>[
+            FlatButton.icon(
+              icon: Icon(Icons.person),
+              label: Text('Sign out?'),
+              onPressed: () => AuthService().signOut(),
+            ),
+          ],
         ),
         body: Column(
           children: [
@@ -134,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     print(snapshot.error);
                     return Text('Oops! Something went wrong :(');
                   }
-                  return Text('Loading ...');
+                  return Loading();
                 },
               ),
             ),
