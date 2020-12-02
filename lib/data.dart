@@ -13,9 +13,8 @@ class Course {
   String name;
   String id;
   String yearId;
-  List<String> taIds;
 
-  Course(this.name, this.id, this.yearId, this.taIds);
+  Course(this.name, this.id, this.yearId);
 }
 
 class Student {
@@ -41,12 +40,9 @@ class TaCourse {
   String taId;
   String courseId;
   double rating;
+  String docId;
 
-  TaCourse(this.taId, this.courseId, this.rating);
-}
-
-List<String> courseTaIds(dynamic courseData) {
-  return (courseData['tas'] as List).map((e) => e.toString()).toList();
+  TaCourse(this.taId, this.courseId, this.docId, this.rating);
 }
 
 Future<List<Year>> getYears() async {
@@ -69,10 +65,9 @@ Future<List<Course>> getCoursesByYear(Year year) async {
       .then((snap) => {
             snap.docs.forEach((courseDoc) {
               var courseData = courseDoc.data();
-              var courseTas = courseTaIds(courseData);
 
-              courses.add(new Course(courseData['name'], courseDoc.id,
-                  courseData['yearId'], courseTas));
+              courses.add(new Course(
+                  courseData['name'], courseDoc.id, courseData['yearId']));
             })
           });
   return courses;
@@ -80,17 +75,17 @@ Future<List<Course>> getCoursesByYear(Year year) async {
 
 Future<List<Course>> getCoursesByTA(TA ta) async {
   List<Course> courses = [];
+
   return db
-      .collection('courses')
-      .where('tas', arrayContains: ta.id)
+      .collection('ta-course')
+      .where('taId', isEqualTo: ta.id)
       .get()
-      .then((snap) {
-    snap.docs.forEach((courseDoc) {
-      var courseData = courseDoc.data();
-      var courseTas = courseTaIds(courseData);
-      courses.add(new Course(
-          courseData['name'], courseDoc.id, courseData['yearId'], courseTas));
-    });
+      .then((snap) async {
+    for (int i = 0; i < snap.docs.length; i += 1) {
+      var taCourseData = snap.docs[i].data();
+      var course = await getCourseById(taCourseData['courseId']);
+      courses.add(course);
+    }
     return courses;
   });
 }
@@ -98,14 +93,18 @@ Future<List<Course>> getCoursesByTA(TA ta) async {
 Future<List<TA>> getTAs(Course course) async {
   List<TA> tas = [];
 
-  for (int i = 0; i < course.taIds.length; i += 1) {
-    String taId = course.taIds[i];
-    var taDoc = await db.collection('tas').doc(taId).get();
-    var taData = taDoc.data();
-    tas.add(new TA(taData['name'], taDoc.id));
-  }
-
-  return tas;
+  return db
+      .collection('ta-course')
+      .where('courseId', isEqualTo: course.id)
+      .get()
+      .then((snap) async {
+    for (int i = 0; i < snap.docs.length; i += 1) {
+      var taCourseData = snap.docs[i].data();
+      var course = await getTaById(taCourseData['taId']);
+      tas.add(course);
+    }
+    return tas;
+  });
 }
 
 Future<TA> getTaById(String taId) {
@@ -118,21 +117,29 @@ Future<TA> getTaById(String taId) {
 Future<Course> getCourseById(String courseId) {
   return db.collection('courses').doc(courseId).get().then((courseDoc) {
     var courseData = courseDoc.data();
-    var courseTas = courseTaIds(courseData);
-    return new Course(
-        courseData['name'], courseDoc.id, courseData['yearId'], courseTas);
+    return new Course(courseData['name'], courseDoc.id, courseData['yearId']);
   });
 }
 
-Future<TaCourse> getTaCoursePair(String docId) {
-  return db.collection('ta-course').doc(docId).get().then((doc) {
+Future<TaCourse> getTaCoursePair(String taId, String courseId) {
+  return db
+      .collection('ta-course')
+      .where('taId', isEqualTo: taId)
+      .where('courseId', isEqualTo: courseId)
+      .get()
+      .then((snap) {
+    var doc = snap.docs.first;
     if (doc.exists == false) {
       return null;
     }
 
     var docData = doc.data();
+    double rating = 0;
+    if (docData['rating'] != null) rating = (docData['rating']) * 1.0;
 
     return new TaCourse(docData['taId'] ?? 'no TA ID',
-        docData['courseId'] ?? 'no Course ID', docData['rating'] ?? -1);
+        docData['courseId'] ?? 'no Course ID', doc.id, rating);
+  });
+}
   });
 }
