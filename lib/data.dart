@@ -141,5 +141,26 @@ Future<TaCourse> getTaCoursePair(String taId, String courseId) {
         docData['courseId'] ?? 'no Course ID', doc.id, rating);
   });
 }
+
+Future<int> getRating(String taCourseId, String uid) {
+  return db
+      .collection('ta-course')
+      .doc(taCourseId)
+      .collection('ratings')
+      .doc(uid)
+      .get()
+      .then((doc) {
+    if (doc.exists == false) return 0;
+    return doc.data()['rating'] ?? 0;
   });
+}
+
+Future<void> updateRating(String taCourseId, String uid, int rating) {
+  return db
+      .collection('ta-course')
+      .doc(taCourseId)
+      .collection('ratings')
+      .doc(uid)
+      .set({'rating': rating});
+  // TODO: update average rating of ta-course-pair using firestore triggers
 }
