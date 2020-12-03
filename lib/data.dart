@@ -164,3 +164,14 @@ Future<void> updateRating(String taCourseId, String uid, int rating) {
       .set({'rating': rating});
   // TODO: update average rating of ta-course-pair using firestore triggers
 }
+
+Future<void> submitFeedback(
+    TaCourse taCourse, String message, String uid, String email) {
+  return db.collection('feedback').add({
+    "taId": taCourse.taId,
+    "courseId": taCourse.courseId,
+    "message": message,
+    "uid": uid,
+    "email": email
+  });
+}
