@@ -45,6 +45,12 @@ class TaCourse {
   TaCourse(this.taId, this.courseId, this.docId, this.rating);
 }
 
+class StudentFeedback {
+  String taId, courseId, message, uid, email;
+
+  StudentFeedback(this.taId, this.courseId, this.message, this.uid, this.email);
+}
+
 Future<List<Year>> getYears() async {
   List<Year> years = [];
   return db.collection('years').get().then((snap) {
@@ -165,13 +171,14 @@ Future<void> updateRating(String taCourseId, String uid, int rating) {
   // TODO: update average rating of ta-course-pair using firestore triggers
 }
 
-Future<void> submitFeedback(
-    TaCourse taCourse, String message, String uid, String email) {
+Future<void> submitFeedback(StudentFeedback f) {
   return db.collection('feedback').add({
-    "taId": taCourse.taId,
-    "courseId": taCourse.courseId,
-    "message": message,
-    "uid": uid,
-    "email": email
+    "taId": f.taId,
+    "courseId": f.courseId,
+    "message": f.message,
+    "uid": f.uid,
+    "email": f.email
+  });
+}
   });
 }

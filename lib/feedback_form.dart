@@ -25,7 +25,9 @@ class _FeedbackFormState extends State<FeedbackForm> {
 
   handleSubmitFeedback() {
     // TODO: show a confirmation message (ex: Are you sure?)
-    submitFeedback(widget.taCourse, controller.text, uid, email);
+    StudentFeedback f = new StudentFeedback(widget.taCourse.taId,
+        widget.taCourse.courseId, controller.text, uid, email);
+    submitFeedback(f);
     controller.text = '';
     // TODO: display a notification (snackbar) to show that feedback was sent
   }
