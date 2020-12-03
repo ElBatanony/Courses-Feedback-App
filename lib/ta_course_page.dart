@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'data.dart';
 
 class TaCoursePage extends StatefulWidget {
@@ -15,19 +17,24 @@ class _TaCoursePageState extends State<TaCoursePage> {
   TA ta;
   Course course;
   TaCourse taCourse;
+  String uid;
+
+  int selectedRating = 0;
 
   getData() async {
     ta = await getTaById(widget.taId);
     course = await getCourseById(widget.courseId);
-    taCourse = await getTaCoursePair(ta.id + '_' + course.id);
+    taCourse = await getTaCoursePair(ta.id, course.id);
+    selectedRating = await getRating(taCourse.docId, uid);
     setState(() {});
     print(ta.name + ' - ' + course.name);
   }
 
   @override
   void initState() {
-    getData();
     super.initState();
+    uid = FirebaseAuth.instance.currentUser.uid;
+    getData();
   }
 
   @override
@@ -46,7 +53,30 @@ class _TaCoursePageState extends State<TaCoursePage> {
                 children: [
                   Text('TA: ' + ta.name),
                   Text('Course: ' + course.name),
-                  Text('Rating: ' + taCourse.rating.toString())
+                  // Text('Rating: ' + taCourse.rating.toString())
+                  // TODO: wait for auto average rating (backend)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text('Rating:'),
+                      DropdownButton<int>(
+                        value: selectedRating,
+                        onChanged: (int newValue) {
+                          setState(() {
+                            selectedRating = newValue;
+                            updateRating(taCourse.docId, uid, selectedRating);
+                          });
+                        },
+                        items: <int>[0, 1, 2, 3, 4, 5].map((int value) {
+                          return DropdownMenuItem<int>(
+                            value: value,
+                            child: Text(
+                                value == 0 ? 'No rating' : value.toString()),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  )
                 ],
               ),
       ),
