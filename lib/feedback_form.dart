@@ -52,3 +52,51 @@ class _FeedbackFormState extends State<FeedbackForm> {
     );
   }
 }
+
+class FeedbackDisplay extends StatefulWidget {
+  final TaCourse taCourse;
+
+  FeedbackDisplay(this.taCourse);
+
+  @override
+  _FeedbackDisplayState createState() => _FeedbackDisplayState();
+}
+
+class _FeedbackDisplayState extends State<FeedbackDisplay> {
+  List<StudentFeedback> feedbackList = [];
+
+  updateFeedback(List<StudentFeedback> f) {
+    setState(() {
+      feedbackList = f;
+    });
+  }
+
+  fetchFeedback() {
+    getFeedback(widget.taCourse).listen((f) {
+      updateFeedback(f);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchFeedback();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ListView.builder(
+        itemCount: feedbackList.length,
+        itemBuilder: (context, index) {
+          var f = feedbackList[index];
+          // TODO: add option to delete one's own feedback
+          return ListTile(
+            title: Text(f.email),
+            subtitle: Text(f.message),
+          );
+        },
+      ),
+    );
+  }
+}

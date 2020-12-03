@@ -79,7 +79,8 @@ class _TaCoursePageState extends State<TaCoursePage> {
                       ),
                     ],
                   ),
-                  FeedbackForm(taCourse)
+                  FeedbackForm(taCourse),
+                  Expanded(child: FeedbackDisplay(taCourse))
                 ],
               ),
       ),

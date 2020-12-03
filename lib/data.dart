@@ -180,5 +180,25 @@ Future<void> submitFeedback(StudentFeedback f) {
     "email": f.email
   });
 }
+
+Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
+  return db
+      .collection('feedback')
+      .where('taId', isEqualTo: taCourse.taId)
+      .where('courseId', isEqualTo: taCourse.courseId)
+      .snapshots()
+      .map((snap) {
+    List<StudentFeedback> feedbackList = [];
+    snap.docs.forEach((doc) {
+      var feedbackData = doc.data();
+      StudentFeedback feedback = new StudentFeedback(
+          taCourse.taId,
+          taCourse.courseId,
+          feedbackData['message'],
+          feedbackData['uid'],
+          feedbackData['email']);
+      feedbackList.add(feedback);
+    });
+    return feedbackList;
   });
 }
