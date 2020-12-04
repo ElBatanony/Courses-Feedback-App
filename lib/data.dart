@@ -171,13 +171,13 @@ Future<void> updateRating(String taCourseId, String uid, int rating) {
   // TODO: update average rating of ta-course-pair using firestore triggers
 }
 
-Future<void> submitFeedback(StudentFeedback f) {
+Future<void> submitFeedback(StudentFeedback f, bool isAnonymous) {
   return db.collection('feedback').add({
     "taId": f.taId,
     "courseId": f.courseId,
     "message": f.message,
     "uid": f.uid,
-    "email": f.email
+    "email": isAnonymous ? 'Anonymous' : f.email
   });
 }
 

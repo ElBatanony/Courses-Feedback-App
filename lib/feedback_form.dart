@@ -16,6 +16,7 @@ class FeedbackForm extends StatefulWidget {
 class _FeedbackFormState extends State<FeedbackForm> {
   TextEditingController controller = new TextEditingController();
   String uid, email;
+  bool isAnonymous = false;
 
   void initState() {
     super.initState();
@@ -27,8 +28,11 @@ class _FeedbackFormState extends State<FeedbackForm> {
     // TODO: show a confirmation message (ex: Are you sure?)
     StudentFeedback f = new StudentFeedback(widget.taCourse.taId,
         widget.taCourse.courseId, controller.text, uid, email);
-    submitFeedback(f);
+    submitFeedback(f, isAnonymous);
     controller.text = '';
+    setState(() {
+      isAnonymous = false;
+    });
     // TODO: display a notification (snackbar) to show that feedback was sent
   }
 
@@ -42,6 +46,15 @@ class _FeedbackFormState extends State<FeedbackForm> {
             controller: controller,
             decoration: InputDecoration(
                 hintText: 'Your feedback message', labelText: 'Feedback'),
+          ),
+          SwitchListTile(
+            title: Text('Anonymous feedback'),
+            value: isAnonymous,
+            onChanged: (value) {
+              setState(() {
+                isAnonymous = value;
+              });
+            },
           ),
           RaisedButton(
             child: Text('Submit Feedback'),
