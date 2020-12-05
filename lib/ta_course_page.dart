@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:innopolis_feedback/feedback_form.dart';
+
 import 'data.dart';
 
 class TaCoursePage extends StatefulWidget {
@@ -76,7 +78,9 @@ class _TaCoursePageState extends State<TaCoursePage> {
                         }).toList(),
                       ),
                     ],
-                  )
+                  ),
+                  FeedbackForm(taCourse),
+                  Expanded(child: FeedbackDisplay(taCourse))
                 ],
               ),
       ),

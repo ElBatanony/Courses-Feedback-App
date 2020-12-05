@@ -45,6 +45,12 @@ class TaCourse {
   TaCourse(this.taId, this.courseId, this.docId, this.rating);
 }
 
+class StudentFeedback {
+  String taId, courseId, message, uid, email;
+
+  StudentFeedback(this.taId, this.courseId, this.message, this.uid, this.email);
+}
+
 Future<List<Year>> getYears() async {
   List<Year> years = [];
   return db.collection('years').get().then((snap) {
@@ -163,4 +169,36 @@ Future<void> updateRating(String taCourseId, String uid, int rating) {
       .doc(uid)
       .set({'rating': rating});
   // TODO: update average rating of ta-course-pair using firestore triggers
+}
+
+Future<void> submitFeedback(StudentFeedback f, bool isAnonymous) {
+  return db.collection('feedback').add({
+    "taId": f.taId,
+    "courseId": f.courseId,
+    "message": f.message,
+    "uid": f.uid,
+    "email": isAnonymous ? 'Anonymous' : f.email
+  });
+}
+
+Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
+  return db
+      .collection('feedback')
+      .where('taId', isEqualTo: taCourse.taId)
+      .where('courseId', isEqualTo: taCourse.courseId)
+      .snapshots()
+      .map((snap) {
+    List<StudentFeedback> feedbackList = [];
+    snap.docs.forEach((doc) {
+      var feedbackData = doc.data();
+      StudentFeedback feedback = new StudentFeedback(
+          taCourse.taId,
+          taCourse.courseId,
+          feedbackData['message'],
+          feedbackData['uid'],
+          feedbackData['email']);
+      feedbackList.add(feedback);
+    });
+    return feedbackList;
+  });
 }
