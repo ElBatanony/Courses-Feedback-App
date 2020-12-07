@@ -16,12 +16,14 @@ class FeedbackForm extends StatefulWidget {
 class _FeedbackFormState extends State<FeedbackForm> {
   TextEditingController controller = new TextEditingController();
   String uid, email;
+  bool emailVerified;
   bool isAnonymous = false;
 
   void initState() {
     super.initState();
     uid = FirebaseAuth.instance.currentUser.uid;
     email = FirebaseAuth.instance.currentUser.email;
+    emailVerified = FirebaseAuth.instance.currentUser.emailVerified;
   }
 
   handleSubmitFeedback() {
@@ -56,10 +58,13 @@ class _FeedbackFormState extends State<FeedbackForm> {
               });
             },
           ),
-          RaisedButton(
+          emailVerified ? RaisedButton(
             child: Text('Submit Feedback'),
             onPressed: handleSubmitFeedback,
-          )
+          ) : Text('You need to verify you account to leave feedback',
+            style: TextStyle(
+                color: Colors.red
+            ),)
         ],
       ),
     );
