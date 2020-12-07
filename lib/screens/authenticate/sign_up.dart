@@ -16,6 +16,7 @@ class _SignUpState extends State<SignUp> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   final String innoMail = '@innopolis.ru';
+  final String innoMail2 = '@innopolis.university';
   String error = '';
   bool loading = false;
 
@@ -62,9 +63,10 @@ class _SignUpState extends State<SignUp> {
                     TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'email'),
-                      validator: (val) => val.endsWith(innoMail)
-                          ? null
-                          : 'Enter an Innopolis email',
+                      validator: (val) =>
+                          val.endsWith(innoMail) || val.endsWith(innoMail2)
+                              ? null
+                              : 'Enter an Innopolis email',
                       onChanged: (val) {
                         setState(() => email = val);
                       },
