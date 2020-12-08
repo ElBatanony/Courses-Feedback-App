@@ -26,8 +26,8 @@ class _FeedbackFormState extends State<FeedbackForm> {
 
   handleSubmitFeedback() {
     // TODO: show a confirmation message (ex: Are you sure?)
-    StudentFeedback f = new StudentFeedback(widget.taCourse.taId,
-        widget.taCourse.courseId, controller.text, uid, email);
+    StudentFeedback f = new StudentFeedback('', widget.taCourse.taId,
+        widget.taCourse.courseId, controller.text, uid, email, [], []);
     submitFeedback(f, isAnonymous);
     controller.text = '';
     setState(() {
@@ -77,6 +77,7 @@ class FeedbackDisplay extends StatefulWidget {
 
 class _FeedbackDisplayState extends State<FeedbackDisplay> {
   List<StudentFeedback> feedbackList = [];
+  String email;
 
   updateFeedback(List<StudentFeedback> f) {
     setState(() {
@@ -93,7 +94,30 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
   @override
   void initState() {
     super.initState();
+    email = FirebaseAuth.instance.currentUser.email;
     fetchFeedback();
+  }
+
+  handleUpvote(StudentFeedback f) {
+    // toggle the upvote state
+    if (f.upvotes.contains(email))
+      f.upvotes.remove(email);
+    else
+      f.upvotes.add(email);
+    // make sure that there is no downvote at the same time
+    f.downvotes.remove(email);
+    return updateVotes(f);
+  }
+
+  handleDownvote(StudentFeedback f) {
+    // toggle the downvote state
+    if (f.downvotes.contains(email))
+      f.downvotes.remove(email);
+    else
+      f.downvotes.add(email);
+    // make sure that there is no upvote at the same time
+    f.upvotes.remove(email);
+    return updateVotes(f);
   }
 
   @override
@@ -103,10 +127,30 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
         itemCount: feedbackList.length,
         itemBuilder: (context, index) {
           var f = feedbackList[index];
+          bool upvoted = f.upvotes.contains(email);
+          bool downvoted = f.downvotes.contains(email);
           // TODO: add option to delete one's own feedback
           return ListTile(
             title: Text(f.email),
             subtitle: Text(f.message),
+            leading: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: upvoted ? Colors.yellow : null),
+              child: IconButton(
+                icon: Icon(Icons.arrow_upward),
+                onPressed: () => handleUpvote(f),
+              ),
+            ),
+            trailing: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: downvoted ? Colors.red[200] : null),
+              child: IconButton(
+                icon: Icon(Icons.arrow_downward),
+                onPressed: () => handleDownvote(f),
+              ),
+            ),
           );
         },
       ),
