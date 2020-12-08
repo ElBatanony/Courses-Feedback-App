@@ -221,3 +221,7 @@ Future<void> updateVotes(StudentFeedback f) {
       .doc(f.feedbackId)
       .update({"upvotes": f.upvotes, "downvotes": f.downvotes});
 }
+
+Future<void> deleteFeedback(StudentFeedback f) {
+  return db.collection('feedback').doc(f.feedbackId).delete();
+}
