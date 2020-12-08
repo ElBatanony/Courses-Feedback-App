@@ -47,8 +47,10 @@ class TaCourse {
 
 class StudentFeedback {
   String taId, courseId, message, uid, email;
+  List<String> upvotes, downvotes; // List of emails
 
-  StudentFeedback(this.taId, this.courseId, this.message, this.uid, this.email);
+  StudentFeedback(this.taId, this.courseId, this.message, this.uid, this.email,
+      this.upvotes, this.downvotes);
 }
 
 Future<List<Year>> getYears() async {
@@ -177,7 +179,9 @@ Future<void> submitFeedback(StudentFeedback f, bool isAnonymous) {
     "courseId": f.courseId,
     "message": f.message,
     "uid": f.uid,
-    "email": isAnonymous ? 'Anonymous' : f.email
+    "email": isAnonymous ? 'Anonymous' : f.email,
+    "upvotes": [],
+    "downvotes": []
   });
 }
 
@@ -196,7 +200,9 @@ Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
           taCourse.courseId,
           feedbackData['message'],
           feedbackData['uid'],
-          feedbackData['email']);
+          feedbackData['email'],
+          feedbackData['upvotes'] ?? [],
+          feedbackData['downvotes'] ?? []);
       feedbackList.add(feedback);
     });
     return feedbackList;
