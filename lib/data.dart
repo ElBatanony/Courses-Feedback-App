@@ -186,6 +186,10 @@ Future<void> submitFeedback(StudentFeedback f, bool isAnonymous) {
   });
 }
 
+List<String> toStringList(List<dynamic> l) {
+  return l.map((e) => e.toString()).toList();
+}
+
 Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
   return db
       .collection('feedback')
@@ -203,8 +207,8 @@ Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
           feedbackData['message'],
           feedbackData['uid'],
           feedbackData['email'],
-          feedbackData['upvotes'] ?? [],
-          feedbackData['downvotes'] ?? []);
+          toStringList(feedbackData['upvotes'] ?? []),
+          toStringList(feedbackData['downvotes'] ?? []));
       feedbackList.add(feedback);
     });
     return feedbackList;
