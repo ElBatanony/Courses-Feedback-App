@@ -46,11 +46,12 @@ class TaCourse {
 }
 
 class StudentFeedback {
+  String feedbackId;
   String taId, courseId, message, uid, email;
   List<String> upvotes, downvotes; // List of emails
 
-  StudentFeedback(this.taId, this.courseId, this.message, this.uid, this.email,
-      this.upvotes, this.downvotes);
+  StudentFeedback(this.feedbackId, this.taId, this.courseId, this.message,
+      this.uid, this.email, this.upvotes, this.downvotes);
 }
 
 Future<List<Year>> getYears() async {
@@ -196,6 +197,7 @@ Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
     snap.docs.forEach((doc) {
       var feedbackData = doc.data();
       StudentFeedback feedback = new StudentFeedback(
+          doc.id,
           taCourse.taId,
           taCourse.courseId,
           feedbackData['message'],
