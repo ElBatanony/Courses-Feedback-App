@@ -214,3 +214,10 @@ Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
     return feedbackList;
   });
 }
+
+Future<void> updateVotes(StudentFeedback f) {
+  return db
+      .collection('feedback')
+      .doc(f.feedbackId)
+      .update({"upvotes": f.upvotes, "downvotes": f.downvotes});
+}
