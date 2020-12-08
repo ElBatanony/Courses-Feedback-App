@@ -137,18 +137,29 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: upvoted ? Colors.yellow : null),
-              child: IconButton(
-                icon: Icon(Icons.arrow_upward),
-                onPressed: () => handleUpvote(f),
-              ),
+              constraints: BoxConstraints(maxWidth: 72),
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Text(f.upvotes.length.toString()),
+                IconButton(
+                  icon: Icon(Icons.arrow_upward),
+                  onPressed: () => handleUpvote(f),
+                )
+              ]),
             ),
             trailing: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: downvoted ? Colors.red[200] : null),
-              child: IconButton(
-                icon: Icon(Icons.arrow_downward),
-                onPressed: () => handleDownvote(f),
+              constraints: BoxConstraints(maxWidth: 72),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(f.downvotes.length.toString()),
+                  IconButton(
+                    icon: Icon(Icons.arrow_downward),
+                    onPressed: () => handleDownvote(f),
+                  ),
+                ],
               ),
             ),
           );
