@@ -77,7 +77,7 @@ class FeedbackDisplay extends StatefulWidget {
 
 class _FeedbackDisplayState extends State<FeedbackDisplay> {
   List<StudentFeedback> feedbackList = [];
-  String email;
+  String uid, email;
 
   updateFeedback(List<StudentFeedback> f) {
     setState(() {
@@ -94,6 +94,7 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
   @override
   void initState() {
     super.initState();
+    uid = FirebaseAuth.instance.currentUser.uid;
     email = FirebaseAuth.instance.currentUser.email;
     fetchFeedback();
   }
@@ -120,6 +121,36 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
     return updateVotes(f);
   }
 
+  handleFeedbackLongPress(StudentFeedback f) async {
+    bool shouldDelete = await showDialog<bool>(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Delete feedback'),
+              content: Text('Are you sure you want to delete this feedback?'),
+              actions: [
+                TextButton(
+                  child: Text('Delete'),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                TextButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (shouldDelete) deleteFeedback(f);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -129,10 +160,10 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
           var f = feedbackList[index];
           bool upvoted = f.upvotes.contains(email);
           bool downvoted = f.downvotes.contains(email);
-          // TODO: add option to delete one's own feedback
           return ListTile(
             title: Text(f.email),
             subtitle: Text(f.message),
+            onLongPress: uid == f.uid ? () => handleFeedbackLongPress(f) : null,
             leading: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
