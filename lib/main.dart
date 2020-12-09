@@ -110,6 +110,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: wrap Scaffold with WillPopScope to avoid exiting the app with native "BACK" button, using goBack() func instead
+    // https://stackoverflow.com/questions/45916658/how-to-deactivate-or-override-the-android-back-button-in-flutter
     return Scaffold(
         appBar: AppBar(
           title: Text('Innopolis Feedback'),
