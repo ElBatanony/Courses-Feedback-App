@@ -23,7 +23,8 @@ class _SignUpState extends State<SignUp> {
   String email = '';
   String password = '';
   String name = '';
-  String yearId = '1'; //constant for now
+  String yearId = 'bs17'; //constant for now
+  // TODO: implement choosing study year
 
   @override
   Widget build(BuildContext context) {
