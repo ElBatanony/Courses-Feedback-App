@@ -46,9 +46,12 @@ class TaCourse {
 }
 
 class StudentFeedback {
+  String feedbackId;
   String taId, courseId, message, uid, email;
+  List<String> upvotes, downvotes; // List of emails
 
-  StudentFeedback(this.taId, this.courseId, this.message, this.uid, this.email);
+  StudentFeedback(this.feedbackId, this.taId, this.courseId, this.message,
+      this.uid, this.email, this.upvotes, this.downvotes);
 }
 
 Future<List<Year>> getYears() async {
@@ -177,8 +180,14 @@ Future<void> submitFeedback(StudentFeedback f, bool isAnonymous) {
     "courseId": f.courseId,
     "message": f.message,
     "uid": f.uid,
-    "email": isAnonymous ? 'Anonymous' : f.email
+    "email": isAnonymous ? 'Anonymous' : f.email,
+    "upvotes": [],
+    "downvotes": []
   });
+}
+
+List<String> toStringList(List<dynamic> l) {
+  return l.map((e) => e.toString()).toList();
 }
 
 Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
@@ -192,13 +201,27 @@ Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
     snap.docs.forEach((doc) {
       var feedbackData = doc.data();
       StudentFeedback feedback = new StudentFeedback(
+          doc.id,
           taCourse.taId,
           taCourse.courseId,
           feedbackData['message'],
           feedbackData['uid'],
-          feedbackData['email']);
+          feedbackData['email'],
+          toStringList(feedbackData['upvotes'] ?? []),
+          toStringList(feedbackData['downvotes'] ?? []));
       feedbackList.add(feedback);
     });
     return feedbackList;
   });
+}
+
+Future<void> updateVotes(StudentFeedback f) {
+  return db
+      .collection('feedback')
+      .doc(f.feedbackId)
+      .update({"upvotes": f.upvotes, "downvotes": f.downvotes});
+}
+
+Future<void> deleteFeedback(StudentFeedback f) {
+  return db.collection('feedback').doc(f.feedbackId).delete();
 }
