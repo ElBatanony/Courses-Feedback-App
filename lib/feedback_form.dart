@@ -16,14 +16,12 @@ class FeedbackForm extends StatefulWidget {
 class _FeedbackFormState extends State<FeedbackForm> {
   TextEditingController controller = new TextEditingController();
   String uid, email;
-  bool emailVerified;
   bool isAnonymous = false;
 
   void initState() {
     super.initState();
     uid = FirebaseAuth.instance.currentUser.uid;
     email = FirebaseAuth.instance.currentUser.email;
-    emailVerified = FirebaseAuth.instance.currentUser.emailVerified;
   }
 
   handleSubmitFeedback() {
@@ -41,33 +39,30 @@ class _FeedbackFormState extends State<FeedbackForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(15),
-      child: Column(
-        children: [
-          TextField(
-            controller: controller,
-            decoration: InputDecoration(
-                hintText: 'Your feedback message', labelText: 'Feedback'),
-          ),
-          SwitchListTile(
-            title: Text('Anonymous feedback'),
-            value: isAnonymous,
-            onChanged: (value) {
-              setState(() {
-                isAnonymous = value;
-              });
-            },
-          ),
-          emailVerified ? RaisedButton(
-            child: Text('Submit Feedback'),
-            onPressed: handleSubmitFeedback,
-          ) : Text('You need to verify you account to leave feedback',
-            style: TextStyle(
-                color: Colors.red
-            ),)
-        ],
-      ),
-    );
+            padding: EdgeInsets.all(15),
+            child: Column(
+              children: [
+                TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                      hintText: 'Your feedback message', labelText: 'Feedback'),
+                ),
+                SwitchListTile(
+                  title: Text('Anonymous feedback'),
+                  value: isAnonymous,
+                  onChanged: (value) {
+                    setState(() {
+                      isAnonymous = value;
+                    });
+                  },
+                ),
+                RaisedButton(
+                  child: Text('Submit Feedback'),
+                  onPressed: handleSubmitFeedback,
+                )
+              ],
+            ),
+          );
   }
 }
 

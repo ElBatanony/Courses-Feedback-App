@@ -20,7 +20,8 @@ class _TaCoursePageState extends State<TaCoursePage> {
   Course course;
   TaCourse taCourse;
   String uid;
-
+  User user;
+  bool emailVerified;
   int selectedRating = 0;
 
   getData() async {
@@ -35,7 +36,9 @@ class _TaCoursePageState extends State<TaCoursePage> {
   @override
   void initState() {
     super.initState();
-    uid = FirebaseAuth.instance.currentUser.uid;
+    user = FirebaseAuth.instance.currentUser;
+    emailVerified = user.emailVerified;
+    uid = user.uid;
     getData();
   }
 
@@ -57,29 +60,52 @@ class _TaCoursePageState extends State<TaCoursePage> {
                   Text('Course: ' + course.name),
                   // Text('Rating: ' + taCourse.rating.toString())
                   // TODO: wait for auto average rating (backend)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text('Rating:'),
-                      DropdownButton<int>(
-                        value: selectedRating,
-                        onChanged: (int newValue) {
-                          setState(() {
-                            selectedRating = newValue;
-                            updateRating(taCourse.docId, uid, selectedRating);
-                          });
-                        },
-                        items: <int>[0, 1, 2, 3, 4, 5].map((int value) {
-                          return DropdownMenuItem<int>(
-                            value: value,
-                            child: Text(
-                                value == 0 ? 'No rating' : value.toString()),
-                          );
-                        }).toList(),
+                  emailVerified
+                      ? Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text('Rating:'),
+                                DropdownButton<int>(
+                                  value: selectedRating,
+                                  onChanged: (int newValue) {
+                                    setState(() {
+                                      selectedRating = newValue;
+                                      updateRating(
+                                          taCourse.docId, uid, selectedRating);
+                                    });
+                                  },
+                                  items:
+                                      <int>[0, 1, 2, 3, 4, 5].map((int value) {
+                                    return DropdownMenuItem<int>(
+                                      value: value,
+                                      child: Text(value == 0
+                                          ? 'No rating'
+                                          : value.toString()),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                            FeedbackForm(taCourse),
+                          ],
+                        )
+                      : Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                            children: [
+                              Text(
+                                'You need to verify you account to leave feedback',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              RaisedButton(
+                                child: Text('Resend verification mail'),
+                                onPressed: user.sendEmailVerification,
+                              )
+                            ],
+                          ),
                       ),
-                    ],
-                  ),
-                  FeedbackForm(taCourse),
                   Expanded(child: FeedbackDisplay(taCourse))
                 ],
               ),
