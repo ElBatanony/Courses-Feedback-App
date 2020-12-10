@@ -37,6 +37,7 @@ class _SignUpState extends State<SignUp> {
     return loading
         ? Loading()
         : Scaffold(
+            resizeToAvoidBottomPadding: false,
             backgroundColor: Colors.brown[100],
             appBar: AppBar(
               backgroundColor: Colors.brown[400],
