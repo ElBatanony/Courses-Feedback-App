@@ -21,10 +21,11 @@ class Student {
   String id;
   String name;
   String yearId;
+  bool isAdmin; // (isRepresentative)
 
   // TODO: add issues
-  // TODO: add feedback, up/down votes, representatives, comments and stuff that we will  have time for
-  Student(this.id, this.name, this.yearId);
+  // TODO: add feedback, up/down votes, comments and stuff that we will have time for
+  Student(this.id, this.name, this.yearId, this.isAdmin);
 }
 
 class TA {

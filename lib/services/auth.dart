@@ -21,12 +21,12 @@ class AuthService {
   }
 
   Future signUp(
-      String email, String password, String name, String yearId) async {
+      String email, String password, String name, String yearId, bool isAdmin) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User user = result.user;
-      await DatabaseService(user.uid).updateStudent(name, yearId);
+      await DatabaseService(user.uid).updateStudent(name, yearId, isAdmin);
       return user;
     } catch (error) {
       print(error.toString());

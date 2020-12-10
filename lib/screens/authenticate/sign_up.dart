@@ -32,6 +32,8 @@ class _SignUpState extends State<SignUp> {
   String yearId = 'bs17'; //constant for now
   // TODO: implement choosing study year
 
+  bool isAdmin = false;
+
   @override
   Widget build(BuildContext context) {
     return loading
@@ -110,7 +112,7 @@ class _SignUpState extends State<SignUp> {
                           if (_formKey.currentState.validate()) {
                             setState(() => loading = true);
                             dynamic result = await _auth.signUp(
-                                email, password, name, yearId);
+                                email, password, name, yearId, isAdmin);
                             if (result == null) {
                               setState(() {
                                 loading = false;

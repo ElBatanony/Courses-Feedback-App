@@ -10,15 +10,16 @@ class DatabaseService {
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('students');
 
-  Future<void> updateStudent(String name, String yearId) async {
+  Future<void> updateStudent(String name, String yearId, bool isAdmin) async {
     return await userCollection.doc(uid).set({
       'name': name,
       'yearId': yearId,
+      'isAdmin': isAdmin
     });
   }
 
   Student _studentFromSnapshot(DocumentSnapshot snapshot) {
-    return Student(uid, snapshot.data()['name'], snapshot.data()['yearId']);
+    return Student(uid, snapshot.data()['name'], snapshot.data()['yearId'], snapshot.data()['isAdmin']);
   }
 
   Stream<Student> get student {
