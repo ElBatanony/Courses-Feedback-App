@@ -40,12 +40,12 @@ class TaCourse {
   List<int> ratings;
 
   calculateAvgRating() {
-    int ratingsCount = ratings.reduce((value, element) => value + element);
-    int sumRatings = 0;
+    int ratingsCount = 0, sumRatings = 0;
     for (int i = 0; i < 5; i += 1) {
+      ratingsCount += ratings[i];
       sumRatings += (i + 1) * ratings[i];
     }
-    avgRating = (sumRatings / (ratingsCount * 5)) * 5;
+    avgRating = sumRatings / ratingsCount;
   }
 
   TaCourse(this.taId, this.courseId, this.docId, this.ratings) {
