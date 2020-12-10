@@ -64,8 +64,7 @@ class _TaCoursePageState extends State<TaCoursePage> {
                       onPressed: goToTaProfile),
                   Text('TA: ' + ta.name),
                   Text('Course: ' + course.name),
-                  // Text('Rating: ' + taCourse.rating.toString())
-                  // TODO: wait for auto average rating (backend)
+                  Text('Rating: ${taCourse.avgRating.toString()}/5'),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
