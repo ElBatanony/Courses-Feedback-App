@@ -16,6 +16,12 @@ class _SignUpState extends State<SignUp> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   final String innoMail = '@innopolis.ru';
+
+  // style
+  final Color primaryColor = Color(0xFF6200EE);
+  final Color inactiveThumbColor = Color(0xFFA4A4A4);
+  final Color inactiveTrackColor = Color(0xFFDDDDDD);
+
   String error = '';
   bool loading = false;
 
@@ -81,6 +87,16 @@ class _SignUpState extends State<SignUp> {
                       onChanged: (val) {
                         setState(() => password = val);
                       },
+                    ),
+                    SizedBox(height: 20.0),
+                    SwitchListTile(
+                      value: isAdmin,
+                      onChanged: (val) {},
+                      // onChanged: (val) => setState(() => isAdmin = !isAdmin),
+                      title: Text("Representative"),
+                      activeColor: primaryColor,
+                      inactiveThumbColor: inactiveThumbColor,
+                      inactiveTrackColor: inactiveTrackColor,
                     ),
                     SizedBox(height: 20.0),
                     RaisedButton(
