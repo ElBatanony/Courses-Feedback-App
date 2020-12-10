@@ -12,7 +12,8 @@ const textInputDecoration = InputDecoration(
   ),
 );
 
-
-const Color primaryColor = Color(0xFF6200EE);
-const Color inactiveThumbColor = Color(0xFFA4A4A4);
-const Color inactiveTrackColor = Color(0xFFDDDDDD);
+class ColorsStyle {
+  static const Color primary = Color(0xFF6200EE);
+  static const Color inactiveThumb = Color(0xFFA4A4A4);
+  static const Color inactiveTrack = Color(0xFFDDDDDD);
+}

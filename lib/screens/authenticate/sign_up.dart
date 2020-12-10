@@ -92,9 +92,9 @@ class _SignUpState extends State<SignUp> {
                       onChanged: (val) {},
                       // onChanged: (val) => setState(() => isAdmin = !isAdmin),
                       title: Text("Representative"),
-                      activeColor: primaryColor,
-                      inactiveThumbColor: inactiveThumbColor,
-                      inactiveTrackColor: inactiveTrackColor,
+                      activeColor: ColorsStyle.primary,
+                      inactiveThumbColor: ColorsStyle.inactiveThumb,
+                      inactiveTrackColor: ColorsStyle.inactiveTrack,
                     ),
                     SizedBox(height: 20.0),
                     RaisedButton(
