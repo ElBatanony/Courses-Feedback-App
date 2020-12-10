@@ -17,11 +17,6 @@ class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   final String innoMail = '@innopolis.ru';
 
-  // style
-  final Color primaryColor = Color(0xFF6200EE);
-  final Color inactiveThumbColor = Color(0xFFA4A4A4);
-  final Color inactiveTrackColor = Color(0xFFDDDDDD);
-
   String error = '';
   bool loading = false;
 
