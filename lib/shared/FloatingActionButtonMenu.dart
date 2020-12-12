@@ -78,6 +78,7 @@ class _FloatingActionButtonMenuState extends State<FloatingActionButtonMenu>
   Widget toggle() {
     return Container(
       child: FloatingActionButton(
+        heroTag: "toggle",
         backgroundColor: _buttonColor.value,
         onPressed: _animate,
         tooltip: widget.tooltip,
