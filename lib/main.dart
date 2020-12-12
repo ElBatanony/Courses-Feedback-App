@@ -121,98 +121,102 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: wrap Scaffold with WillPopScope to avoid exiting the app with native "BACK" button, using goBack() func instead
-    // https://stackoverflow.com/questions/45916658/how-to-deactivate-or-override-the-android-back-button-in-flutter
-    return Scaffold(
-        floatingActionButton: FutureBuilder<Student>(
-          future: getStudentById(_auth.getCurrentUserId()),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data.isAdmin) {
-                return FloatingActionButtonMenu(
-                  tooltip: "Add",
-                  animatedIcon: AnimatedIcons.menu_close,
-                  menuItems: [
-                    FloatingActionButton(
-                      heroTag: 'add_ta',
-                      onPressed: () {
-                        print('TA added');
-                      },
-                      tooltip: 'Add TA',
-                      backgroundColor: ColorsStyle.primary,
-                      child: Icon(Icons.person_add),
-                    ),
-                    FloatingActionButton(
-                        heroTag: 'add_course',
+    return WillPopScope(
+      onWillPop: () async {
+        goBack();
+        return false;
+      },
+      child: Scaffold(
+          floatingActionButton: FutureBuilder<Student>(
+            future: getStudentById(_auth.getCurrentUserId()),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data.isAdmin) {
+                  return FloatingActionButtonMenu(
+                    tooltip: "Add",
+                    animatedIcon: AnimatedIcons.menu_close,
+                    menuItems: [
+                      FloatingActionButton(
+                        heroTag: 'add_ta',
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddCourse()));
+                          print('TA added');
                         },
-                        tooltip: 'Add Course',
+                        tooltip: 'Add TA',
                         backgroundColor: ColorsStyle.primary,
-                        child: Icon(Icons.post_add)),
-                  ],
-                );
-              } else {
+                        child: Icon(Icons.person_add),
+                      ),
+                      FloatingActionButton(
+                          heroTag: 'add_course',
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AddCourse()));
+                          },
+                          tooltip: 'Add Course',
+                          backgroundColor: ColorsStyle.primary,
+                          child: Icon(Icons.post_add)),
+                    ],
+                  );
+                } else {
+                  return Container();
+                }
+              }
+              if (snapshot.hasError) {
+                print(snapshot.error);
                 return Container();
               }
-            }
-            if (snapshot.hasError) {
-              print(snapshot.error);
-              return Container();
-            }
-            return Loading();
-          },
-        ),
-        appBar: AppBar(
-          title: Text('Innopolis Feedback'),
-          actions: <Widget>[
-            FlatButton.icon(
-              icon: Icon(Icons.person),
-              label: Text('Sign out?'),
-              onPressed: () => AuthService().signOut(),
-            ),
-          ],
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Text('Welcome to Innopolis Feedback!',
-                  style: TextStyle(fontSize: 22)),
-            ),
-            Expanded(
-              child: FutureBuilder(
-                future: getYears(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    years = snapshot.data;
-                    if (selectedYear == null) {
-                      currentList = years;
-                      currentBuilder = yearItemBuilder;
-                    }
-                    return ListView.builder(
-                        padding: const EdgeInsets.all(8),
-                        itemCount: currentList.length,
-                        itemBuilder: (context, index) =>
-                            currentBuilder(currentList[index]));
-                  }
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    return Text('Oops! Something went wrong :(');
-                  }
-                  return Loading();
-                },
+              return Loading();
+            },
+          ),
+          appBar: AppBar(
+            title: Text('Innopolis Feedback'),
+            actions: <Widget>[
+              FlatButton.icon(
+                icon: Icon(Icons.person),
+                label: Text('Sign out?'),
+                onPressed: () => AuthService().signOut(),
               ),
-            ),
-            if (selectedYear != null || selectedCourse != null)
-              RaisedButton(
-                child: Text('Back'),
-                onPressed: goBack,
-              )
-          ],
-        ));
+            ],
+          ),
+          body: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text('Welcome to Innopolis Feedback!',
+                    style: TextStyle(fontSize: 22)),
+              ),
+              Expanded(
+                child: FutureBuilder(
+                  future: getYears(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      years = snapshot.data;
+                      if (selectedYear == null) {
+                        currentList = years;
+                        currentBuilder = yearItemBuilder;
+                      }
+                      return ListView.builder(
+                          padding: const EdgeInsets.all(8),
+                          itemCount: currentList.length,
+                          itemBuilder: (context, index) =>
+                              currentBuilder(currentList[index]));
+                    }
+                    if (snapshot.hasError) {
+                      print(snapshot.error);
+                      return Text('Oops! Something went wrong :(');
+                    }
+                    return Loading();
+                  },
+                ),
+              ),
+              if (selectedYear != null || selectedCourse != null)
+                RaisedButton(
+                  child: Text('Back'),
+                  onPressed: goBack,
+                )
+            ],
+          )),
+    );
   }
 }
