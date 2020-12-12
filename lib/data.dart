@@ -55,8 +55,8 @@ class StudentFeedback {
 Future<Student> getStudentById(String studentId) async {
   return db.collection('students').doc(studentId).get().then((studentDoc) {
     var studentData = studentDoc.data();
-    return new Student(studentDoc.id, studentData['name'], studentData['yearId'],
-        studentData['isAdmin']?? false);
+    return new Student(studentDoc.id, studentData['name'],
+        studentData['yearId'], studentData['isAdmin'] ?? false);
     // todo: consider custom claims(role) check
   });
 }
@@ -169,6 +169,19 @@ Future<int> getRating(String taCourseId, String uid) {
     if (doc.exists == false) return 0;
     return doc.data()['rating'] ?? 0;
   });
+}
+
+Future<void> addCourse(String name, String id, String yearId) {
+  return db.collection('courses').doc(id).set({'name': name, 'yearId': yearId});
+}
+
+Future<void> addTA(String name) {
+  return db.collection('courses').add({'name': name});
+}
+
+//TaCourse(this.taId, this.courseId, this.docId, this.rating);
+Future<void> addTaCourse(String courseId, String taId) {
+  return db.collection('ta-course').add({'courseId': courseId, 'taId': taId});
 }
 
 Future<void> updateRating(String taCourseId, String uid, int rating) {
