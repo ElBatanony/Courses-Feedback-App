@@ -109,6 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return ListTile(
       title: Text(course.name),
       onTap: () => selectCourse(course),
+      trailing: trailingPopupMenu(course),
     );
   }
 
@@ -117,6 +118,31 @@ class _MyHomePageState extends State<MyHomePage> {
       title: Text(ta.name),
       onTap: () => selectTA(ta),
     );
+  }
+
+  Widget trailingPopupMenu(Course selectedCourse) {
+    return PopupMenuButton(
+        icon: Icon(Icons.more_vert),
+        onSelected: (value) {
+          switch (value) {
+            case "remove":
+              print("Course \""+selectedCourse.id+"\" deleted");
+              break;
+          }
+        },
+        itemBuilder: (context) => [
+              PopupMenuItem(
+                  value: "remove",
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                        child: Icon(Icons.delete),
+                      ),
+                      Text('Delete')
+                    ],
+                  )),
+            ]);
   }
 
   @override
