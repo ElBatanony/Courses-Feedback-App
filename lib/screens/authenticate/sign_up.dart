@@ -90,8 +90,8 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(height: 20.0),
                     SwitchListTile(
                       value: isAdmin,
-                      onChanged: (val) {},
-                      // onChanged: (val) => setState(() => isAdmin = !isAdmin),
+                      // onChanged: (val) {},
+                      onChanged: (val) => setState(() => isAdmin = !isAdmin),
                       title: Text("Representative"),
                       activeColor: ColorsStyle.primary,
                       inactiveThumbColor: ColorsStyle.inactiveThumb,
