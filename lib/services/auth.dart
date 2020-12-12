@@ -20,8 +20,8 @@ class AuthService {
     }
   }
 
-  Future signUp(
-      String email, String password, String name, String yearId, bool isAdmin) async {
+  Future signUp(String email, String password, String name, String yearId,
+      bool isAdmin) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -30,7 +30,7 @@ class AuthService {
       return user;
     } catch (error) {
       print(error.toString());
-      return null;
+      return error.toString().split("] ")[1];
     }
   }
 

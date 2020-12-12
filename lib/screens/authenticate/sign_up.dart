@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
@@ -108,11 +109,18 @@ class _SignUpState extends State<SignUp> {
                             setState(() => loading = true);
                             dynamic result = await _auth.signUp(
                                 email, password, name, yearId, isAdmin);
-                            if (result == null) {
-                              setState(() {
-                                loading = false;
-                                error = 'Please supply a valid email';
-                              });
+                            if (!(result is User)) {
+                              if (result is String) {
+                                setState(() {
+                                  loading = false;
+                                  error = result;
+                                });
+                              } else {
+                                setState(() {
+                                  loading = false;
+                                  error = 'Please supply a valid email';
+                                });
+                              }
                             }
                           }
                         }),
