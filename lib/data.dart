@@ -52,6 +52,15 @@ class StudentFeedback {
   StudentFeedback(this.taId, this.courseId, this.message, this.uid, this.email);
 }
 
+Future<Student> getStudentById(String studentId) async {
+  return db.collection('students').doc(studentId).get().then((studentDoc) {
+    var studentData = studentDoc.data();
+    return new Student(studentDoc.id, studentData['name'], studentData['yearId'],
+        studentData['isAdmin']?? false);
+    // todo: consider custom claims(role) check
+  });
+}
+
 Future<List<Year>> getYears() async {
   List<Year> years = [];
   return db.collection('years').get().then((snap) {

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:innopolis_feedback/screens/wrapper.dart';
 import 'package:innopolis_feedback/services/auth.dart';
+import 'package:innopolis_feedback/shared/FloatingActionButtonMenu.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
+import 'package:innopolis_feedback/shared/styles.dart';
 import 'package:provider/provider.dart';
 
 import 'ta_course_page.dart';
@@ -38,6 +40,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final AuthService _auth = AuthService();
+  bool isAdmin = false;
+
   List<Year> years;
   Year selectedYear;
   Course selectedCourse;
@@ -56,6 +61,11 @@ class _MyHomePageState extends State<MyHomePage> {
       return setState(() {
         selectedYear = null;
       });
+  }
+
+  fetchPrivilege() async {
+    Student student = await getStudentById(_auth.getCurrentUserId());
+    isAdmin = student.isAdmin;
   }
 
   selectYear(Year year) async {
@@ -110,9 +120,33 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    fetchPrivilege();
     // TODO: wrap Scaffold with WillPopScope to avoid exiting the app with native "BACK" button, using goBack() func instead
     // https://stackoverflow.com/questions/45916658/how-to-deactivate-or-override-the-android-back-button-in-flutter
     return Scaffold(
+        floatingActionButton: isAdmin
+            ? FloatingActionButtonMenu(
+                tooltip: "Add",
+                animatedIcon: AnimatedIcons.menu_close,
+                menuItems: [
+                  FloatingActionButton(
+                    onPressed: () {
+                      print('TA added');
+                    },
+                    tooltip: 'Add TA',
+                    backgroundColor: ColorsStyle.primary,
+                    child: Icon(Icons.person_add),
+                  ),
+                  FloatingActionButton(
+                      onPressed: () {
+                        print('Course added');
+                      },
+                      tooltip: 'Add Course',
+                      backgroundColor: ColorsStyle.primary,
+                      child: Icon(Icons.post_add)),
+                ],
+              )
+            : Container(),
         appBar: AppBar(
           title: Text('Innopolis Feedback'),
           actions: <Widget>[
