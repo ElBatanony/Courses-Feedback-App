@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:innopolis_feedback/screens/addCourse.dart';
 import 'package:innopolis_feedback/screens/wrapper.dart';
 import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/shared/FloatingActionButtonMenu.dart';
@@ -120,33 +121,51 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    fetchPrivilege();
     // TODO: wrap Scaffold with WillPopScope to avoid exiting the app with native "BACK" button, using goBack() func instead
     // https://stackoverflow.com/questions/45916658/how-to-deactivate-or-override-the-android-back-button-in-flutter
     return Scaffold(
-        floatingActionButton: isAdmin
-            ? FloatingActionButtonMenu(
-                tooltip: "Add",
-                animatedIcon: AnimatedIcons.menu_close,
-                menuItems: [
-                  FloatingActionButton(
-                    onPressed: () {
-                      print('TA added');
-                    },
-                    tooltip: 'Add TA',
-                    backgroundColor: ColorsStyle.primary,
-                    child: Icon(Icons.person_add),
-                  ),
-                  FloatingActionButton(
+        floatingActionButton: FutureBuilder<Student>(
+          future: getStudentById(_auth.getCurrentUserId()),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data.isAdmin) {
+                return FloatingActionButtonMenu(
+                  tooltip: "Add",
+                  animatedIcon: AnimatedIcons.menu_close,
+                  menuItems: [
+                    FloatingActionButton(
+                      heroTag: 'add_ta',
                       onPressed: () {
-                        print('Course added');
+                        print('TA added');
                       },
-                      tooltip: 'Add Course',
+                      tooltip: 'Add TA',
                       backgroundColor: ColorsStyle.primary,
-                      child: Icon(Icons.post_add)),
-                ],
-              )
-            : Container(),
+                      child: Icon(Icons.person_add),
+                    ),
+                    FloatingActionButton(
+                        heroTag: 'add_course',
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddCourse()));
+                        },
+                        tooltip: 'Add Course',
+                        backgroundColor: ColorsStyle.primary,
+                        child: Icon(Icons.post_add)),
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            }
+            if (snapshot.hasError) {
+              print(snapshot.error);
+              return Container();
+            }
+            return Loading();
+          },
+        ),
         appBar: AppBar(
           title: Text('Innopolis Feedback'),
           actions: <Widget>[
