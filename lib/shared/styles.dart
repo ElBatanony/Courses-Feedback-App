@@ -18,4 +18,5 @@ class ColorsStyle {
   static const Color inactiveTrack = Color(0xFFDDDDDD);
   static const Color error = Colors.redAccent;
   static const Color success = Colors.green;
+  static const Color divider = Color.fromARGB(200, 33, 33, 33);
 }
