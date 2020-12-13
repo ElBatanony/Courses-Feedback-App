@@ -227,12 +227,18 @@ Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
 
 Future<void> deleteCourse(String courseId) async {
   await db.collection('courses').doc(courseId).delete();
-  await db.collection('ta-course').where('courseId'==courseId).get().then((snapshot) {
+  await db
+      .collection('ta-course')
+      .where('courseId', isEqualTo: courseId)
+      .get()
+      .then((snapshot) {
     for (DocumentSnapshot ds in snapshot.docs) {
       ds.reference.delete();
     }
   });
-  await db.collection('feedback').where('courseId'==courseId).get().then((snapshot) {
+  await db.collection('feedback').where('courseId', isEqualTo: courseId)
+      .get()
+      .then((snapshot) {
     for (DocumentSnapshot ds in snapshot.docs) {
       ds.reference.delete();
     }
@@ -241,7 +247,9 @@ Future<void> deleteCourse(String courseId) async {
 
 Future<void> deleteStudent(String studentId) async {
   await db.collection('students').doc(studentId).delete();
-  await db.collection('feedback').where('uid'==studentId).get().then((snapshot) {
+  await db.collection('feedback').where('uid', isEqualTo: studentId)
+      .get()
+      .then((snapshot) {
     for (DocumentSnapshot ds in snapshot.docs) {
       ds.reference.delete();
     }
@@ -250,12 +258,14 @@ Future<void> deleteStudent(String studentId) async {
 
 Future<void> deleteTA(String taId) async {
   await db.collection('tas').doc(taId).delete();
-  await db.collection('ta-course').where('taId'==taId).get().then((snapshot) {
+  await db.collection('ta-course').where('taId', isEqualTo: taId).get().then((
+      snapshot) {
     for (DocumentSnapshot ds in snapshot.docs) {
       ds.reference.delete();
     }
   });
-  await db.collection('feedback').where('taId'==taId).get().then((snapshot) {
+  await db.collection('feedback').where('taId', isEqualTo: taId).get().then((
+      snapshot) {
     for (DocumentSnapshot ds in snapshot.docs) {
       ds.reference.delete();
     }

@@ -64,9 +64,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   goBack() {
     if (selectedCourse != null)
-      return setState(() {
+      return setState(() async {
         selectedCourse = null;
-        selectYear(selectedYear);
+        await selectYear(selectedYear);
       });
     if (selectedYear != null)
       return setState(() {
@@ -111,16 +111,21 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget yearItemBuilder(Year year) {
     return ListTile(
       title: Text(year.name),
-      onTap: () => selectYear(year),
+      onTap: () async => await selectYear(year),
     );
   }
 
   Widget courseItemBuilder(Course course) {
-    return ListTile(
-      title: Text(course.name),
-      onTap: () => selectCourse(course),
-      trailing: trailingPopupMenu(course),
-    );
+    if (isAdmin) {
+      return ListTile(
+        title: Text(course.name),
+        onTap: () => selectCourse(course),
+        trailing: trailingPopupMenu(course),
+      );
+    } else {
+      return ListTile(
+          title: Text(course.name), onTap: () => selectCourse(course));
+    }
   }
 
   Widget taItemBuilder(TA ta) {
@@ -153,29 +158,91 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget trailingPopupMenu(Course selectedCourse) {
-    return PopupMenuButton(
-        icon: Icon(Icons.more_vert),
-        onSelected: (value) {
-          switch (value) {
-            case "remove":
-              print("Course \""+selectedCourse.id+"\" deleted");
-              break;
-          }
-        },
-        itemBuilder: (context) => [
-              PopupMenuItem(
-                  value: "remove",
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
-                        child: Icon(Icons.delete),
-                      ),
-                      Text('Delete')
-                    ],
-                  )),
-            ]);
+    return Builder(
+      builder: (context) {
+        return PopupMenuButton(
+            icon: Icon(Icons.more_vert),
+            onSelected: (value) async {
+              switch (value) {
+                case "remove":
+                  print("Attempt to delete the course \"" +
+                      selectedCourse.id +
+                      "\".");
+                  try {
+                    await deleteCourse(selectedCourse.id);
+                    showSuccessSnackBar(
+                        context,
+                        "Course \'" +
+                            selectedCourse.name +
+                            "\' successfully deleted!");
+                  } catch (e) {
+                    print(e.toString());
+                    showErrorSnackBar(
+                        context,
+                        "Unable to delete Course \'" +
+                            selectedCourse.id +
+                            "\'.",
+                        e.toString().split("] ")[1]);
+                  }
+                  setState(() async {
+                    await selectYear(selectedYear);
+                  });
+                  break;
+              }
+            },
+            itemBuilder: (context) => [
+                  PopupMenuItem(
+                      value: "remove",
+                      child: Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                            child: Icon(Icons.delete),
+                          ),
+                          Text('Delete')
+                        ],
+                      )),
+                ]);
+      },
+    );
   }
+
+  Widget floatingActionButtonMenu(BuildContext context) =>
+      FloatingActionButtonMenu(
+        tooltip: "Add",
+        animatedIcon: AnimatedIcons.menu_close,
+        menuItems: [
+          FloatingActionButton(
+            heroTag: 'add_ta',
+            onPressed: () {
+              print('TA added');
+            },
+            tooltip: 'Add TA',
+            backgroundColor: ColorsStyle.primary,
+            child: Icon(Icons.person_add),
+          ),
+          FloatingActionButton(
+              heroTag: 'add_course',
+              onPressed: () async {
+                final result = tryCast<bool>(
+                    await Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => AddCourse())),
+                    fallback: false);
+                print("Result from addCourse: " + result.toString());
+                if (result) {
+                  showSuccessSnackBar(context, "Course successfully added!");
+                }
+                setState(() async {
+                  if (selectedYear != null) {
+                    await selectYear(selectedYear);
+                  }
+                });
+              },
+              tooltip: 'Add Course',
+              backgroundColor: ColorsStyle.primary,
+              child: Icon(Icons.post_add)),
+        ],
+      );
 
   @override
   Widget build(BuildContext context) {

@@ -153,7 +153,7 @@ class _AddCourseState extends State<AddCourse> {
                             try {
                               await addCourse(
                                   name.text, abbreviation.text, year.id);
-                              Navigator.pop(context);
+                              Navigator.pop(context, true);
                             } catch (e) {
                               try {
                                 print(e.toString());
