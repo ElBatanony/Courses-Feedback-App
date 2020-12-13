@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:innopolis_feedback/screens/addCourse.dart';
+import 'package:innopolis_feedback/screens/addTA.dart';
 import 'package:innopolis_feedback/screens/wrapper.dart';
 import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/shared/FloatingActionButtonMenu.dart';
@@ -52,26 +53,27 @@ class _MyHomePageState extends State<MyHomePage> {
   List currentList;
   Function currentBuilder;
 
-  T tryCast<T>(dynamic x, {T fallback}){
-    try{
+  T tryCast<T>(dynamic x, {T fallback}) {
+    try {
       return (x as T);
-    }
-    on TypeError catch(e){
+    } on TypeError catch (e) {
       print('CastError when trying to cast $x to $T! \n($e)');
       return fallback;
     }
   }
 
-  goBack() {
-    if (selectedCourse != null)
-      return setState(() async {
+  goBack() async {
+    if (selectedCourse != null) {
+      await selectYear(selectedYear);
+      return setState(() {
         selectedCourse = null;
-        await selectYear(selectedYear);
       });
-    if (selectedYear != null)
+    }
+    if (selectedYear != null) {
       return setState(() {
         selectedYear = null;
       });
+    }
   }
 
   fetchPrivilege() async {
@@ -81,8 +83,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   selectYear(Year year) async {
     print('Selected year: ' + year.name);
-    currentList = await getCoursesByYear(year);
+    List<Course> temp = await getCoursesByYear(year);
     setState(() {
+      currentList = temp;
       selectedYear = year;
       currentBuilder = courseItemBuilder;
     });
@@ -91,8 +94,9 @@ class _MyHomePageState extends State<MyHomePage> {
   selectCourse(Course course) async {
     print('Selected course: ' + course.name);
 
-    currentList = await getTAs(course);
+    List<TA> temp = await getTAs(course);
     setState(() {
+      currentList = temp;
       selectedCourse = course;
       currentBuilder = taItemBuilder;
     });
@@ -124,15 +128,24 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     } else {
       return ListTile(
-          title: Text(course.name), onTap: () => selectCourse(course));
+          title: Text(course.name),
+          onTap: () async => await selectCourse(course));
     }
   }
 
   Widget taItemBuilder(TA ta) {
-    return ListTile(
-      title: Text(ta.name),
-      onTap: () => selectTA(ta),
-    );
+    if (isAdmin) {
+      return ListTile(
+        title: Text(ta.name),
+        onTap: () => selectTA(ta),
+        trailing: trailingPopupMenu(ta),
+      );
+    } else {
+      return ListTile(
+        title: Text(ta.name),
+        onTap: () => selectTA(ta),
+      );
+    }
   }
 
   void showSuccessSnackBar(BuildContext context, String message) {
@@ -157,7 +170,32 @@ class _MyHomePageState extends State<MyHomePage> {
           )));
   }
 
-  Widget trailingPopupMenu(Course selectedCourse) {
+  Widget trailingPopupMenu(dynamic selectedItem) {
+    String itemType;
+    String representation;
+    Function delete;
+    Function update;
+
+    if (selectedItem is Course) {
+      itemType = "Course";
+      representation = selectedItem.name;
+      delete = () async {
+        await deleteCourse(selectedItem.id);
+      };
+      update = () async {
+        await selectYear(selectedYear);
+      };
+    } else if (selectedItem is TA) {
+      itemType = "TA";
+      representation = selectedItem.name;
+      delete = () async {
+        await deleteTA(selectedItem.id);
+      };
+      update = () async {
+        await selectCourse(selectedCourse);
+      };
+    }
+
     return Builder(
       builder: (context) {
         return PopupMenuButton(
@@ -165,28 +203,31 @@ class _MyHomePageState extends State<MyHomePage> {
             onSelected: (value) async {
               switch (value) {
                 case "remove":
-                  print("Attempt to delete the course \"" +
-                      selectedCourse.id +
-                      "\".");
+                  print(
+                      "Delete button is pushed---------------------------------------------------------------");
                   try {
-                    await deleteCourse(selectedCourse.id);
-                    showSuccessSnackBar(
-                        context,
-                        "Course \'" +
-                            selectedCourse.name +
-                            "\' successfully deleted!");
+                    await delete();
+                    showSuccessSnackBar(context,
+                        "$itemType '$representation' successfully deleted!");
                   } catch (e) {
                     print(e.toString());
-                    showErrorSnackBar(
-                        context,
-                        "Unable to delete Course \'" +
-                            selectedCourse.id +
-                            "\'.",
-                        e.toString().split("] ")[1]);
+                    if (e.toString().contains("] ")) {
+                      showErrorSnackBar(
+                          context,
+                          "Unable to delete $itemType \'" +
+                              selectedItem.id +
+                              "\'.",
+                          e.toString().split("] ")[1]);
+                    } else {
+                      showErrorSnackBar(
+                          context,
+                          "Unable to delete $itemType \'" +
+                              selectedItem.id +
+                              "\'.",
+                          e.toString());
+                    }
                   }
-                  setState(() async {
-                    await selectYear(selectedYear);
-                  });
+                  await update();
                   break;
               }
             },
@@ -214,8 +255,19 @@ class _MyHomePageState extends State<MyHomePage> {
         menuItems: [
           FloatingActionButton(
             heroTag: 'add_ta',
-            onPressed: () {
-              print('TA added');
+            onPressed: () async {
+              final result = tryCast<bool>(
+                  await Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => AddTA())) ??
+                      false,
+                  fallback: false);
+              print("Result from addTA: " + result.toString());
+              if (result) {
+                showSuccessSnackBar(context, "TA successfully added!");
+              }
+              if (selectedCourse != null) {
+                await selectCourse(selectedCourse);
+              }
             },
             tooltip: 'Add TA',
             backgroundColor: ColorsStyle.primary,
@@ -225,18 +277,19 @@ class _MyHomePageState extends State<MyHomePage> {
               heroTag: 'add_course',
               onPressed: () async {
                 final result = tryCast<bool>(
-                    await Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => AddCourse())),
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddCourse())) ??
+                        false,
                     fallback: false);
                 print("Result from addCourse: " + result.toString());
                 if (result) {
                   showSuccessSnackBar(context, "Course successfully added!");
                 }
-                setState(() async {
-                  if (selectedYear != null) {
-                    await selectYear(selectedYear);
-                  }
-                });
+                if (selectedYear != null) {
+                  await selectYear(selectedYear);
+                }
               },
               tooltip: 'Add Course',
               backgroundColor: ColorsStyle.primary,
@@ -257,32 +310,8 @@ class _MyHomePageState extends State<MyHomePage> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.isAdmin) {
-                  return FloatingActionButtonMenu(
-                    tooltip: "Add",
-                    animatedIcon: AnimatedIcons.menu_close,
-                    menuItems: [
-                      FloatingActionButton(
-                        heroTag: 'add_ta',
-                        onPressed: () {
-                          print('TA added');
-                        },
-                        tooltip: 'Add TA',
-                        backgroundColor: ColorsStyle.primary,
-                        child: Icon(Icons.person_add),
-                      ),
-                      FloatingActionButton(
-                          heroTag: 'add_course',
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => AddCourse()));
-                          },
-                          tooltip: 'Add Course',
-                          backgroundColor: ColorsStyle.primary,
-                          child: Icon(Icons.post_add)),
-                    ],
-                  );
+                  isAdmin = snapshot.data.isAdmin;
+                  return floatingActionButtonMenu(context);
                 } else {
                   return Container();
                 }
