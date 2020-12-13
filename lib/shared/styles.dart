@@ -17,4 +17,5 @@ class ColorsStyle {
   static const Color inactiveThumb = Color(0xFFA4A4A4);
   static const Color inactiveTrack = Color(0xFFDDDDDD);
   static const Color error = Colors.redAccent;
+  static const Color success = Colors.green;
 }
