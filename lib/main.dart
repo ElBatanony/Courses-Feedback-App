@@ -130,6 +130,28 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void showSuccessSnackBar(BuildContext context, String message) {
+    Scaffold.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+          backgroundColor: ColorsStyle.success, content: Text(message)));
+  }
+
+  void showErrorSnackBar(BuildContext context, String message, String error) {
+    Scaffold.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+          duration: Duration(seconds: 6),
+          backgroundColor: ColorsStyle.error,
+          content: RichText(
+            text: TextSpan(text: message, children: <TextSpan>[
+              TextSpan(text: '\nReason: '),
+              TextSpan(
+                  text: error, style: TextStyle(fontWeight: FontWeight.bold))
+            ]),
+          )));
+  }
+
   Widget trailingPopupMenu(Course selectedCourse) {
     return PopupMenuButton(
         icon: Icon(Icons.more_vert),
