@@ -75,7 +75,7 @@ class _FloatingActionButtonMenuState extends State<FloatingActionButtonMenu>
     });
   }
 
-  Widget toggle() {
+  Widget _toggle() {
     return Container(
       child: FloatingActionButton(
         heroTag: "toggle",
@@ -107,7 +107,7 @@ class _FloatingActionButtonMenuState extends State<FloatingActionButtonMenu>
           )
       );
     });
-    _menuItems.add(toggle());
+    _menuItems.add(_toggle());
     return Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: _menuItems
