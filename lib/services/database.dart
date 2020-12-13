@@ -10,18 +10,32 @@ class DatabaseService {
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('students');
 
-  Future<void> updateStudent(String name, String yearId) async {
-    return await userCollection.doc(uid).set({
-      'name': name,
-      'yearId': yearId,
+  Future<void> setStudent({String name, String yearId}) async {
+    return await userCollection
+        .doc(uid)
+        .set({'name': name, 'yearId': yearId, 'favoriteTAs': []});
+  }
+
+  Future<void> updateStudent(
+      {String name, String yearId, List<String> favoriteTAs}) async {
+    return await userCollection.doc(uid).update({
+      if (name != null) 'name': name,
+      if (yearId != null) 'yearId': yearId,
+      if (favoriteTAs != null) 'favoriteTAs': favoriteTAs
     });
   }
 
   Student _studentFromSnapshot(DocumentSnapshot snapshot) {
-    return Student(uid, snapshot.data()['name'], snapshot.data()['yearId']);
+    return Student(
+        uid,
+        snapshot.data()['name'],
+        snapshot.data()['yearId'],
+        snapshot
+            .data()['favoriteTAs']
+            .map<String>((id) => id.toString())
+            .toList());
   }
 
-  Stream<Student> get student {
-    return userCollection.doc(uid).snapshots().map(_studentFromSnapshot);
-  }
+  Future<Student> get student =>
+      userCollection.doc(uid).get().then(_studentFromSnapshot);
 }
