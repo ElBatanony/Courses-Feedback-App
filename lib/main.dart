@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         home: Wrapper(),
         title: 'Innopolis Feedback',
         theme: ThemeData(
-          primarySwatch: Colors.green,
+          primarySwatch: Colors.deepPurple,
         ),
       ),
     );
