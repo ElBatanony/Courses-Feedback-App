@@ -39,30 +39,30 @@ class _FeedbackFormState extends State<FeedbackForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(15),
-      child: Column(
-        children: [
-          TextField(
-            controller: controller,
-            decoration: InputDecoration(
-                hintText: 'Your feedback message', labelText: 'Feedback'),
-          ),
-          SwitchListTile(
-            title: Text('Anonymous feedback'),
-            value: isAnonymous,
-            onChanged: (value) {
-              setState(() {
-                isAnonymous = value;
-              });
-            },
-          ),
-          RaisedButton(
-            child: Text('Submit Feedback'),
-            onPressed: handleSubmitFeedback,
-          )
-        ],
-      ),
-    );
+            padding: EdgeInsets.all(15),
+            child: Column(
+              children: [
+                TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                      hintText: 'Your feedback message', labelText: 'Feedback'),
+                ),
+                SwitchListTile(
+                  title: Text('Anonymous feedback'),
+                  value: isAnonymous,
+                  onChanged: (value) {
+                    setState(() {
+                      isAnonymous = value;
+                    });
+                  },
+                ),
+                RaisedButton(
+                  child: Text('Submit Feedback'),
+                  onPressed: handleSubmitFeedback,
+                )
+              ],
+            ),
+          );
   }
 }
 

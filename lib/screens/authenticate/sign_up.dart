@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
@@ -16,6 +17,7 @@ class _SignUpState extends State<SignUp> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   final String innoMail = '@innopolis.ru';
+  final String innoMail2 = '@innopolis.university';
   String error = '';
   bool loading = false;
 
@@ -62,9 +64,10 @@ class _SignUpState extends State<SignUp> {
                     TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'email'),
-                      validator: (val) => val.endsWith(innoMail)
-                          ? null
-                          : 'Enter an Innopolis email',
+                      validator: (val) =>
+                          val.endsWith(innoMail) || val.endsWith(innoMail2)
+                              ? null
+                              : 'Enter an Innopolis email',
                       onChanged: (val) {
                         setState(() => email = val);
                       },
@@ -91,13 +94,15 @@ class _SignUpState extends State<SignUp> {
                         onPressed: () async {
                           if (_formKey.currentState.validate()) {
                             setState(() => loading = true);
-                            dynamic result = await _auth.signUp(
+                            User user = await _auth.signUp(
                                 email, password, name, yearId);
-                            if (result == null) {
+                            if (user == null) {
                               setState(() {
                                 loading = false;
-                                error = 'Please supply a valid email';
+                                error = 'The email address is already in use';
                               });
+                            } else {
+                              user.sendEmailVerification();
                             }
                           }
                         }),
