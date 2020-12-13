@@ -65,7 +65,7 @@ class _AddCourseState extends State<AddCourse> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text("Name:"),
+                        Text("Name"),
                       ],
                     ),
                     TextFormField(
@@ -84,7 +84,7 @@ class _AddCourseState extends State<AddCourse> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text("Abbreviation:"),
+                        Text("Abbreviation"),
                       ],
                     ),
                     TextFormField(
@@ -103,7 +103,7 @@ class _AddCourseState extends State<AddCourse> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text("Year:"),
+                        Text("Year"),
                       ],
                     ),
                     FutureBuilder(
