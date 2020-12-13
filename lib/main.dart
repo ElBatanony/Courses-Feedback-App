@@ -6,7 +6,7 @@ import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
 import 'package:provider/provider.dart';
 
-import 'ta_profile_page.dart';
+import 'ta_course_page.dart';
 
 import 'data.dart';
 
@@ -20,14 +20,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<User>.value(
-        value: AuthService().user,
-        child: MaterialApp(
-          home: Wrapper(),
-          title: 'Innopolis Feedback',
-          theme: ThemeData(
-            primarySwatch: Colors.green,
-          ),
+      value: AuthService().user,
+      child: MaterialApp(
+        home: Wrapper(),
+        title: 'Innopolis Feedback',
+        theme: ThemeData(
+          primarySwatch: Colors.green,
         ),
+      ),
     );
   }
 }
@@ -79,8 +79,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   selectTA(TA ta) {
     print('Selected TA: ' + ta.name);
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => TaProfilePage(ta.id, ta.name)));
+    String title = ta.name + ' - ' + selectedCourse.name;
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                TaCoursePage(title, ta.id, selectedCourse.id)));
   }
 
   Widget yearItemBuilder(Year year) {

@@ -22,8 +22,6 @@ class Student {
   String name;
   String yearId;
 
-  // TODO: add issues
-  // TODO: add feedback, up/down votes, representatives, comments and stuff that we will  have time for
   Student(this.id, this.name, this.yearId);
 }
 
@@ -31,24 +29,37 @@ class TA {
   String id;
   String name;
 
-  // TODO: add issues
-  // TODO: add rating
   TA(this.name, this.id);
 }
 
 class TaCourse {
   String taId;
   String courseId;
-  double rating;
   String docId;
+  double avgRating;
+  List<int> ratings;
 
-  TaCourse(this.taId, this.courseId, this.docId, this.rating);
+  calculateAvgRating() {
+    int ratingsCount = 0, sumRatings = 0;
+    for (int i = 0; i < 5; i += 1) {
+      ratingsCount += ratings[i];
+      sumRatings += (i + 1) * ratings[i];
+    }
+    avgRating = sumRatings / ratingsCount;
+  }
+
+  TaCourse(this.taId, this.courseId, this.docId, this.ratings) {
+    calculateAvgRating();
+  }
 }
 
 class StudentFeedback {
+  String feedbackId;
   String taId, courseId, message, uid, email;
+  List<String> upvotes, downvotes; // List of emails
 
-  StudentFeedback(this.taId, this.courseId, this.message, this.uid, this.email);
+  StudentFeedback(this.feedbackId, this.taId, this.courseId, this.message,
+      this.uid, this.email, this.upvotes, this.downvotes);
 }
 
 Future<List<Year>> getYears() async {
@@ -140,11 +151,15 @@ Future<TaCourse> getTaCoursePair(String taId, String courseId) {
     }
 
     var docData = doc.data();
-    double rating = 0;
-    if (docData['rating'] != null) rating = (docData['rating']) * 1.0;
+
+    List<int> ratings = [];
+    for (int i = 1; i <= 5; i += 1) {
+      List<dynamic> rating = docData['rating$i'] ?? [];
+      ratings.add(rating.length);
+    }
 
     return new TaCourse(docData['taId'] ?? 'no TA ID',
-        docData['courseId'] ?? 'no Course ID', doc.id, rating);
+        docData['courseId'] ?? 'no Course ID', doc.id, ratings);
   });
 }
 
@@ -168,7 +183,6 @@ Future<void> updateRating(String taCourseId, String uid, int rating) {
       .collection('ratings')
       .doc(uid)
       .set({'rating': rating});
-  // TODO: update average rating of ta-course-pair using firestore triggers
 }
 
 Future<void> submitFeedback(StudentFeedback f, bool isAnonymous) {
@@ -177,8 +191,14 @@ Future<void> submitFeedback(StudentFeedback f, bool isAnonymous) {
     "courseId": f.courseId,
     "message": f.message,
     "uid": f.uid,
-    "email": isAnonymous ? 'Anonymous' : f.email
+    "email": isAnonymous ? 'Anonymous' : f.email,
+    "upvotes": [],
+    "downvotes": []
   });
+}
+
+List<String> toStringList(List<dynamic> l) {
+  return l.map((e) => e.toString()).toList();
 }
 
 Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
@@ -192,13 +212,27 @@ Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
     snap.docs.forEach((doc) {
       var feedbackData = doc.data();
       StudentFeedback feedback = new StudentFeedback(
+          doc.id,
           taCourse.taId,
           taCourse.courseId,
           feedbackData['message'],
           feedbackData['uid'],
-          feedbackData['email']);
+          feedbackData['email'],
+          toStringList(feedbackData['upvotes'] ?? []),
+          toStringList(feedbackData['downvotes'] ?? []));
       feedbackList.add(feedback);
     });
     return feedbackList;
   });
+}
+
+Future<void> updateVotes(StudentFeedback f) {
+  return db
+      .collection('feedback')
+      .doc(f.feedbackId)
+      .update({"upvotes": f.upvotes, "downvotes": f.downvotes});
+}
+
+Future<void> deleteFeedback(StudentFeedback f) {
+  return db.collection('feedback').doc(f.feedbackId).delete();
 }

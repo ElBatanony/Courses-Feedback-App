@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:innopolis_feedback/feedback_form.dart';
 
 import 'data.dart';
+import 'ta_profile_page.dart';
 
 class TaCoursePage extends StatefulWidget {
   final String title, taId, courseId;
@@ -33,6 +34,11 @@ class _TaCoursePageState extends State<TaCoursePage> {
     print(ta.name + ' - ' + course.name);
   }
 
+  goToTaProfile() {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => TaProfilePage(ta.id, ta.name)));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -56,10 +62,12 @@ class _TaCoursePageState extends State<TaCoursePage> {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  RaisedButton(
+                      child: Text('Go to TA profile'),
+                      onPressed: goToTaProfile),
                   Text('TA: ' + ta.name),
                   Text('Course: ' + course.name),
-                  // Text('Rating: ' + taCourse.rating.toString())
-                  // TODO: wait for auto average rating (backend)
+                  Text('Rating: ${taCourse.avgRating.toString()}/5'),
                   emailVerified
                       ? Column(
                           children: [
