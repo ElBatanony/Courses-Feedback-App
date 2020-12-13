@@ -52,6 +52,16 @@ class _MyHomePageState extends State<MyHomePage> {
   List currentList;
   Function currentBuilder;
 
+  T tryCast<T>(dynamic x, {T fallback}){
+    try{
+      return (x as T);
+    }
+    on TypeError catch(e){
+      print('CastError when trying to cast $x to $T! \n($e)');
+      return fallback;
+    }
+  }
+
   goBack() {
     if (selectedCourse != null)
       return setState(() {
