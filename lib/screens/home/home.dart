@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AppBar;
 import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
 import 'package:innopolis_feedback/ta_course_page.dart';
 import 'package:innopolis_feedback/data.dart';
+import 'package:innopolis_feedback/ui/app_bar.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -83,8 +84,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Innopolis Feedback'),
+          title: 'Innopolis Feedback',
           actions: <Widget>[
             FlatButton.icon(
               icon: Icon(Icons.person),
@@ -95,11 +97,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Text('Welcome to Innopolis Feedback!',
-                  style: TextStyle(fontSize: 22)),
-            ),
             Expanded(
               child: FutureBuilder(
                 future: getYears(),
