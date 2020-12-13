@@ -33,7 +33,7 @@ class _AddCourseState extends State<AddCourse> {
     String result =
         (now.month >= 6 ? "[F" : "[S") + (now.year % 100).toString() + "]";
     parts.forEach((part) {
-      result += part == "" ? "" : part[0];
+      result += part == "" ? "" : part[0].toUpperCase();
     });
     return result;
   }
@@ -111,27 +111,46 @@ class _AddCourseState extends State<AddCourse> {
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           _years = snapshot.data;
-                          year = _years[0];
-                          return DropdownButtonFormField<Year>(
-                            decoration:
-                                textInputDecoration.copyWith(hintText: 'year'),
-                            value: year,
-                            icon: Icon(Icons.arrow_drop_down),
-                            iconSize: 24,
-                            elevation: 16,
-                            onChanged: (Year newValue) {
-                              setState(() {
-                                year = newValue;
-                              });
-                            },
-                            items:
-                                _years.map<DropdownMenuItem<Year>>((Year year) {
-                              return DropdownMenuItem<Year>(
+                          year = _years.isNotEmpty ? _years[0] : null;
+                          if (_years.isNotEmpty) {
+                            year = _years[0];
+                            return DropdownButtonFormField<Year>(
+                              decoration: textInputDecoration.copyWith(
+                                  hintText: 'year'),
+                              value: year,
+                              icon: Icon(Icons.arrow_drop_down),
+                              iconSize: 24,
+                              elevation: 16,
+                              onChanged: (Year newValue) {
+                                setState(() {
+                                  year = newValue;
+                                });
+                              },
+                              items: _years
+                                  .map<DropdownMenuItem<Year>>((Year year) {
+                                return DropdownMenuItem<Year>(
+                                  value: year,
+                                  child: Text(year.name),
+                                );
+                              }).toList(),
+                            );
+                          } else {
+                            year = null;
+                            return DropdownButtonFormField<Year>(
+                                decoration: textInputDecoration.copyWith(
+                                    hintText: 'year'),
                                 value: year,
-                                child: Text(year.name),
-                              );
-                            }).toList(),
-                          );
+                                icon: Icon(Icons.arrow_drop_down),
+                                iconSize: 24,
+                                elevation: 16,
+                                onChanged: (Year newValue) {},
+                                items: [
+                                  DropdownMenuItem<Year>(
+                                    value: year,
+                                    child: Text(""),
+                                  )
+                                ]);
+                          }
                         }
                         if (snapshot.hasError) {
                           print(snapshot.error);
