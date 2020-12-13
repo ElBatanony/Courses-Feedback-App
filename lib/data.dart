@@ -7,6 +7,11 @@ class Year {
   String id;
 
   Year(this.name, this.id);
+
+  @override
+  String toString() {
+    return "Year(id: $id, name: $name)";
+  }
 }
 
 class Course {
@@ -15,6 +20,25 @@ class Course {
   String yearId;
 
   Course(this.name, this.id, this.yearId);
+
+  @override
+  String toString() {
+    return "Course(id: $id, name: $name, yearId: $yearId)";
+  }
+
+  @override
+  bool operator ==(Object other) {
+    try {
+      // ignore: test_types_in_equals
+      return this.id == (other as Course).id;
+    } on TypeError {
+      return false;
+    }
+  }
+
+  @override
+  // TODO: implement hashCode
+  int get hashCode => super.hashCode;
 }
 
 class Student {
@@ -175,8 +199,8 @@ Future<void> addCourse(String name, String id, String yearId) {
   return db.collection('courses').doc(id).set({'name': name, 'yearId': yearId});
 }
 
-Future<void> addTA(String name) {
-  return db.collection('courses').add({'name': name});
+Future<String> addTA(String name) async {
+  return (await db.collection('tas').add({'name': name})).id;
 }
 
 Future<void> addTaCourse(String courseId, String taId) {
