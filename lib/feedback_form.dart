@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:innopolis_feedback/screens/feedback_page.dart';
 
 import 'data.dart';
 
@@ -39,30 +40,30 @@ class _FeedbackFormState extends State<FeedbackForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-            padding: EdgeInsets.all(15),
-            child: Column(
-              children: [
-                TextField(
-                  controller: controller,
-                  decoration: InputDecoration(
-                      hintText: 'Your feedback message', labelText: 'Feedback'),
-                ),
-                SwitchListTile(
-                  title: Text('Anonymous feedback'),
-                  value: isAnonymous,
-                  onChanged: (value) {
-                    setState(() {
-                      isAnonymous = value;
-                    });
-                  },
-                ),
-                RaisedButton(
-                  child: Text('Submit Feedback'),
-                  onPressed: handleSubmitFeedback,
-                )
-              ],
-            ),
-          );
+      padding: EdgeInsets.all(15),
+      child: Column(
+        children: [
+          TextField(
+            controller: controller,
+            decoration: InputDecoration(
+                hintText: 'Your feedback message', labelText: 'Feedback'),
+          ),
+          SwitchListTile(
+            title: Text('Anonymous feedback'),
+            value: isAnonymous,
+            onChanged: (value) {
+              setState(() {
+                isAnonymous = value;
+              });
+            },
+          ),
+          RaisedButton(
+            child: Text('Submit Feedback'),
+            onPressed: handleSubmitFeedback,
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -163,7 +164,10 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
           return ListTile(
             title: Text(f.email),
             subtitle: Text(f.message),
-            onLongPress: uid == f.uid ? () => handleFeedbackLongPress(f) : null,
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => FeedbackPage(f))),
+            onLongPress:
+                uid == f.uid ? () => handleFeedbackLongPress(f) : null,
             leading: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
