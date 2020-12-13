@@ -4,6 +4,7 @@ import 'package:innopolis_feedback/shared/loading.dart';
 import 'package:innopolis_feedback/ta_course_page.dart';
 import 'package:innopolis_feedback/data.dart';
 import 'package:innopolis_feedback/ui/app_bar.dart';
+import 'package:innopolis_feedback/ui/list_item.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -61,23 +62,34 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget yearItemBuilder(Year year) {
-    return ListTile(
-      title: Text(year.name),
+    return ListItem(
+      title: year.name,
       onTap: () => selectYear(year),
     );
   }
 
   Widget courseItemBuilder(Course course) {
-    return ListTile(
-      title: Text(course.name),
+    return ListItem(
+      title: course.name,
       onTap: () => selectCourse(course),
     );
   }
 
   Widget taItemBuilder(TA ta) {
-    return ListTile(
-      title: Text(ta.name),
+    return ListItem(
+      title: ta.name,
       onTap: () => selectTA(ta),
+      leading: CircleAvatar(
+        backgroundColor: Colors.deepPurple[100],
+        radius: 18,
+        child: Opacity(
+          opacity: 0.9,
+          child: Icon(
+            Icons.person,
+            color: Colors.white,
+          ),
+        ),
+      ),
     );
   }
 
@@ -108,10 +120,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       currentBuilder = yearItemBuilder;
                     }
                     return ListView.builder(
-                        padding: const EdgeInsets.all(8),
-                        itemCount: currentList.length,
-                        itemBuilder: (context, index) =>
-                            currentBuilder(currentList[index]));
+                      padding: const EdgeInsets.all(30),
+                      itemCount: currentList.length,
+                      itemBuilder: (context, index) =>
+                          currentBuilder(currentList[index]),
+                    );
                   }
                   if (snapshot.hasError) {
                     print(snapshot.error);

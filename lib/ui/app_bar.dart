@@ -14,5 +14,6 @@ class AppBar extends M.AppBar {
           actions: actions,
           backgroundColor: M.Colors.white,
           elevation: 0,
+          titleSpacing: 30,
         );
 }
