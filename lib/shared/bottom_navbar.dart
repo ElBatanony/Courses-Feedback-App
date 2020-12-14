@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:innopolis_feedback/main.dart';
+import 'package:innopolis_feedback/screens/home/home.dart';
 import 'package:innopolis_feedback/screens/profile.dart';
 
 class BottomNavBar extends StatelessWidget {
