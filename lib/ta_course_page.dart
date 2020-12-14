@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:innopolis_feedback/feedback_form.dart';
+import 'package:innopolis_feedback/shared/bottom_navbar.dart';
 import 'package:innopolis_feedback/shared/resend_verifivaction_mail.dart';
 
 import 'data.dart';
@@ -105,6 +106,7 @@ class _TaCoursePageState extends State<TaCoursePage> {
                 ],
               ),
       ),
+      bottomNavigationBar: BottomNavBar(),
     );
   }
 }
