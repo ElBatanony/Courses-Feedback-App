@@ -34,7 +34,8 @@ class _FeedbackFormState extends State<FeedbackForm> {
     StudentFeedback f = new StudentFeedback('', widget.taCourse.taId,
         widget.taCourse.courseId, controller.text, uid, email, [], []);
     await submitFeedback(f, isAnonymous);
-    controller.text = '';
+    controller.clear();
+    FocusScope.of(context).unfocus();
     setState(() {
       isAnonymous = false;
     });
