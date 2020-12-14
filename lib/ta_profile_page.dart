@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/services/database.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
+import 'package:innopolis_feedback/ui/app_bar.dart';
 
 import 'data.dart';
 import 'ta_course_page.dart';
@@ -63,8 +64,8 @@ class _TaProfilePageState extends State<TaProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('TA - ' + widget.taName),
+      appBar: CustomAppBar(
+        title: 'TA - ' + widget.taName,
       ),
       body: Center(
         child: ta != null

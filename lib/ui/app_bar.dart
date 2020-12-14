@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends AppBar {
-  CustomAppBar(
-      {String title,
-      List<Widget> actions,
-      Function onGoBack,
-      bool goBackIconVisible = false})
-      : super(
+  CustomAppBar({
+    String title,
+    List<Widget> actions,
+    Function onGoBack,
+    bool goBackIconVisible = false,
+  }) : super(
+          iconTheme: IconThemeData(color: Colors.deepPurple[400]),
           title: Text(
             title,
             style: TextStyle(
