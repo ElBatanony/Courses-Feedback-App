@@ -5,7 +5,7 @@ class CustomAppBar extends AppBar {
       {String title,
       List<Widget> actions,
       Function onGoBack,
-      bool goBackIconVisible})
+      bool goBackIconVisible = false})
       : super(
           title: Text(
             title,
