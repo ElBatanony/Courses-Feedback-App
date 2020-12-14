@@ -23,7 +23,6 @@ class DatabaseService {
     return Student(
         uid,
         snapshot.data()['name'] ?? 'No name',
-        snapshot.data()['yearId'] ?? 'No year',
         snapshot.data()['favoriteTAs'] != null
             ? snapshot
                 .data()['favoriteTAs']
