@@ -106,7 +106,9 @@ class _TaCoursePageState extends State<TaCoursePage> {
                 ],
               ),
       ),
-      bottomNavigationBar: BottomNavBar(),
+      bottomNavigationBar: BottomNavBar(
+        defaultSelectedIndex: 0,
+      ),
     );
   }
 }

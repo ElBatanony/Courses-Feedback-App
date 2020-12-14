@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:innopolis_feedback/shared/bottom_navbar.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
 import 'package:innopolis_feedback/ta_course_page.dart';
 import 'package:innopolis_feedback/data.dart';
@@ -100,6 +101,9 @@ class _MyHomePageState extends State<MyHomePage> {
         title: 'Innopolis Feedback',
         goBackIconVisible: selectedYear != null || selectedCourse != null,
         onGoBack: goBack,
+      ),
+      bottomNavigationBar: BottomNavBar(
+        defaultSelectedIndex: 0,
       ),
       body: Column(
         children: [
