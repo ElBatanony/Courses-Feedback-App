@@ -17,8 +17,6 @@ class AuthLayout extends StatelessWidget {
     this.toggleViewHelpingText,
   });
 
-  // TODO: disable horizontal orientation
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
