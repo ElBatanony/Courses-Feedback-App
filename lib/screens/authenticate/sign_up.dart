@@ -53,15 +53,14 @@ class _SignUpState extends State<SignUp> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
-                  error != ''
-                      ? Text(
-                          error,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 14.0,
-                          ),
-                        )
-                      : Container(),
+                  if (error != '')
+                    Text(
+                      error,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 14.0,
+                      ),
+                    ),
                   SizedBox(height: 15),
                   TextFormField(
                     placeholder: 'Name',

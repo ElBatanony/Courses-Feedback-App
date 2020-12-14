@@ -48,15 +48,14 @@ class _SignInState extends State<SignIn> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
-                  error != ''
-                      ? Text(
-                          error,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 14.0,
-                          ),
-                        )
-                      : Container(),
+                  if (error != '')
+                    Text(
+                      error,
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 14.0,
+                      ),
+                    ),
                   SizedBox(
                     height: 15,
                   ),
