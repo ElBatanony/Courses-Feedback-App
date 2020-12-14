@@ -173,14 +173,14 @@ class _AddCourseState extends State<AddCourse> {
                               await addCourse(
                                   name.text, abbreviation.text, year.id);
                               Navigator.pop(context, true);
-                            } catch (e) {
-                              try {
-                                print(e.toString());
+                            } catch (e, p) {
+                              print(e.toString() + " " + p.toString());
+                              if (e.toString().contains("]")) {
                                 error = e.toString().split('] ')[1];
-                              } catch (e) {
-                                print(e.toString());
-                                error = "Oops! Something went wrong :(";
+                              } else {
+                                error = e.toString();
                               }
+
                               setState(() => loading = false);
                             }
                           }

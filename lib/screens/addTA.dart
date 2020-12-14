@@ -192,17 +192,12 @@ class _AddTAState extends State<AddTA> {
                 }
                 Navigator.pop(context, true);
               }
-            } catch (e) {
-              try {
-                print(e.toString());
-                if (e.toString().contains("]")) {
-                  error = e.toString().split('] ')[1];
-                } else {
-                  error = e.toString();
-                }
-              } catch (e) {
-                print(e.toString());
-                error = "Oops! Something went wrong :(";
+            } catch (e, p) {
+              print(e.toString() + " " + p.toString());
+              if (e.toString().contains("]")) {
+                error = e.toString().split('] ')[1];
+              } else {
+                error = e.toString();
               }
               setState(() => loading = false);
             }
