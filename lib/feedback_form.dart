@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:innopolis_feedback/services/auth.dart';
+import 'package:innopolis_feedback/screens/feedback_page.dart';
 
 import 'data.dart';
 
@@ -27,8 +28,8 @@ class _FeedbackFormState extends State<FeedbackForm> {
 
   handleSubmitFeedback() {
     // TODO: show a confirmation message (ex: Are you sure?)
-    StudentFeedback f = new StudentFeedback(widget.taCourse.taId,
-        widget.taCourse.courseId, controller.text, uid, email, null);
+    StudentFeedback f = new StudentFeedback('', widget.taCourse.taId,
+        widget.taCourse.courseId, controller.text, uid, email, [], []);
     submitFeedback(f, isAnonymous);
     controller.text = '';
     setState(() {
@@ -80,6 +81,7 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
   List<StudentFeedback> feedbackList = [];
   final AuthService _auth = AuthService();
   bool isAdmin = false;
+  String uid, email;
 
   updateFeedback(List<StudentFeedback> f) {
     setState(() {
@@ -139,128 +141,112 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
   @override
   void initState() {
     super.initState();
+    uid = FirebaseAuth.instance.currentUser.uid;
+    email = FirebaseAuth.instance.currentUser.email;
     fetchFeedback();
+  }
+
+  handleUpvote(StudentFeedback f) {
+    // toggle the upvote state
+    if (f.upvotes.contains(email))
+      f.upvotes.remove(email);
+    else
+      f.upvotes.add(email);
+    // make sure that there is no downvote at the same time
+    f.downvotes.remove(email);
+    return updateVotes(f);
+  }
+
+  handleDownvote(StudentFeedback f) {
+    // toggle the downvote state
+    if (f.downvotes.contains(email))
+      f.downvotes.remove(email);
+    else
+      f.downvotes.add(email);
+    // make sure that there is no upvote at the same time
+    f.upvotes.remove(email);
+    return updateVotes(f);
+  }
+
+  handleFeedbackLongPress(StudentFeedback f) async {
+    bool shouldDelete = await showDialog<bool>(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Delete feedback'),
+              content: Text('Are you sure you want to delete this feedback?'),
+              actions: [
+                TextButton(
+                  child: Text('Delete'),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                TextButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (shouldDelete) deleteFeedback(f);
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Student>(
-      future: getStudentById(_auth.getCurrentUserId()),
-      builder: (futureContext, snapshot) {
-        if (snapshot.hasData) {
-          isAdmin = snapshot.data.isAdmin;
-        }
-        return Container(
-          child: ListView.builder(
-            itemCount: feedbackList.length,
-            itemBuilder: (context, index) {
-              var f = feedbackList[index];
-              return ListTile(
-                title: Text(f.email),
-                subtitle: Text(f.message),
-                trailing: Builder(
-                  builder: (context) {
-                    if (isAdmin || _auth.getCurrentUserId() == f.uid) {
-                      return PopupMenuButton(
-                          icon: Icon(Icons.more_vert),
-                          onSelected: (value) async {
-                            switch (value) {
-                              case "remove":
-                                var itemType = "Feedback";
-                                var representation;
-                                if (f.message.length < 10) {
-                                  representation =
-                                      f.message.substring(0, f.message.length);
-                                } else {
-                                  representation =
-                                      f.message.substring(0, 10) + "...";
-                                }
-                                try {
-                                  await deleteFeedback(f.id);
-                                  showSuccessSnackBar(context,
-                                      "$itemType '$representation' successfully deleted!");
-                                } catch (e, p) {
-                                  print(e.toString() + ' ' + p.toString());
-                                  if (e.toString().contains("] ")) {
-                                    showErrorSnackBar(
-                                        context,
-                                        "Unable to delete $itemType '$representation'",
-                                        e.toString().split("] ")[1]);
-                                  } else {
-                                    showErrorSnackBar(
-                                        context,
-                                        "Unable to delete $itemType '$representation'",
-                                        e.toString());
-                                  }
-                                }
-                                await fetchFeedback();
-                                break;
-                              case "removeAllFromUser":
-                                var itemType = "Feedback";
-                                Student student;
-                                try {
-                                  student = await getStudentById(f.uid);
-                                  await deleteFeedbackByStudentTaCourse(
-                                      f.uid, f.courseId, f.taId);
-                                  showSuccessSnackBar(context,
-                                      "All $itemType from ${student.name} successfully deleted!");
-                                } catch (e, p) {
-                                  print(e.toString() + ' ' + p.toString());
-                                  if (e.toString().contains("] ")) {
-                                    showErrorSnackBar(
-                                        context,
-                                        "Unable to delete $itemType from ${student.name ?? "User"}.",
-                                        e.toString().split("] ")[1]);
-                                  } else {
-                                    showErrorSnackBar(
-                                        context,
-                                        "Unable to delete $itemType from ${student.name ?? "User"}.",
-                                        e.toString());
-                                  }
-                                }
-                                await fetchFeedback();
-                                break;
-                              case "removeUser":
-                                var itemType = "User";
-                                Student student;
-                                try {
-                                  student = await getStudentById(f.uid);
-                                  if (f.uid == _auth.getCurrentUserId()) {
-                                    throw Exception(
-                                        "You can't delete yourself");
-                                  }
-                                  await deleteStudent(f.uid);
-
-                                  showSuccessSnackBar(context,
-                                      "$itemType '${student.name}' successfully deleted!");
-                                } catch (e, p) {
-                                  print(e.toString() + ' ' + p.toString());
-                                  if (e.toString().contains("] ")) {
-                                    showErrorSnackBar(
-                                        context,
-                                        "Unable to delete $itemType '${student.name ?? "username"}'.",
-                                        e.toString().split("] ")[1]);
-                                  } else {
-                                    showErrorSnackBar(
-                                        context,
-                                        "Unable to delete $itemType '${student.name ?? "username"}'.",
-                                        e.toString());
-                                  }
-                                }
-                                await fetchFeedback();
-                                break;
-                            }
-                          },
-                          itemBuilder: itemBuilder);
-                    }
-                    return Container(width: 0, height: 0);
-                  },
-                ),
-              );
-            },
-          ),
-        );
-      },
+    return Container(
+      child: ListView.builder(
+        itemCount: feedbackList.length,
+        itemBuilder: (context, index) {
+          var f = feedbackList[index];
+          bool upvoted = f.upvotes.contains(email);
+          bool downvoted = f.downvotes.contains(email);
+          // TODO: display a negative or toxic warning depending on the sentiment of the feedback
+          return ListTile(
+            title: Text(f.email),
+            subtitle: Text(f.message),
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => FeedbackPage(f))),
+            onLongPress:
+                uid == f.uid ? () => handleFeedbackLongPress(f) : null,
+            leading: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: upvoted ? Colors.yellow : null),
+              constraints: BoxConstraints(maxWidth: 72),
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Text(f.upvotes.length.toString()),
+                IconButton(
+                  icon: Icon(Icons.arrow_upward),
+                  onPressed: () => handleUpvote(f),
+                )
+              ]),
+            ),
+            trailing: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: downvoted ? Colors.red[200] : null),
+              constraints: BoxConstraints(maxWidth: 72),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(f.downvotes.length.toString()),
+                  IconButton(
+                    icon: Icon(Icons.arrow_downward),
+                    onPressed: () => handleDownvote(f),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:innopolis_feedback/feedback_form.dart';
+import 'package:innopolis_feedback/shared/resend_verifivaction_mail.dart';
 
 import 'data.dart';
 import 'ta_profile_page.dart';
@@ -21,7 +22,8 @@ class _TaCoursePageState extends State<TaCoursePage> {
   Course course;
   TaCourse taCourse;
   String uid;
-
+  User user;
+  bool emailVerified;
   int selectedRating = 0;
 
   getData() async {
@@ -41,7 +43,9 @@ class _TaCoursePageState extends State<TaCoursePage> {
   @override
   void initState() {
     super.initState();
-    uid = FirebaseAuth.instance.currentUser.uid;
+    user = FirebaseAuth.instance.currentUser;
+    emailVerified = user.emailVerified;
+    uid = user.uid;
     getData();
   }
 
@@ -64,31 +68,39 @@ class _TaCoursePageState extends State<TaCoursePage> {
                       onPressed: goToTaProfile),
                   Text('TA: ' + ta.name),
                   Text('Course: ' + course.name),
-                  // Text('Rating: ' + taCourse.rating.toString())
-                  // TODO: wait for auto average rating (backend)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text('Rating:'),
-                      DropdownButton<int>(
-                        value: selectedRating,
-                        onChanged: (int newValue) {
-                          setState(() {
-                            selectedRating = newValue;
-                            updateRating(taCourse.docId, uid, selectedRating);
-                          });
-                        },
-                        items: <int>[0, 1, 2, 3, 4, 5].map((int value) {
-                          return DropdownMenuItem<int>(
-                            value: value,
-                            child: Text(
-                                value == 0 ? 'No rating' : value.toString()),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                  FeedbackForm(taCourse),
+                  Text('Rating: ${taCourse.avgRating.toString()}/5'),
+                  emailVerified
+                      ? Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text('Rating:'),
+                                DropdownButton<int>(
+                                  value: selectedRating,
+                                  onChanged: (int newValue) {
+                                    setState(() {
+                                      selectedRating = newValue;
+                                      updateRating(
+                                          taCourse.docId, uid, selectedRating);
+                                    });
+                                  },
+                                  items:
+                                      <int>[0, 1, 2, 3, 4, 5].map((int value) {
+                                    return DropdownMenuItem<int>(
+                                      value: value,
+                                      child: Text(value == 0
+                                          ? 'No rating'
+                                          : value.toString()),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                            FeedbackForm(taCourse),
+                          ],
+                        )
+                      : ResendVerificationEmail(user),
                   Expanded(child: FeedbackDisplay(taCourse))
                 ],
               ),

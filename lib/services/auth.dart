@@ -24,17 +24,19 @@ class AuthService {
     }
   }
 
-  Future signUp(String email, String password, String name, String yearId,
-      bool isAdmin) async {
+  Future signUp(
+      String email, String password, String name, String yearId) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      User user = result.user;
-      await DatabaseService(user.uid).updateStudent(name, yearId, isAdmin);
-      return user;
+      return _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((response) async {
+           await DatabaseService(response.user.uid)
+            .updateStudent(name: name, yearId: yearId);
+           return response.user;
+      });
     } catch (error) {
       print(error.toString());
-      return error.toString().split("] ")[1];
+      return error.toString();
     }
   }
 

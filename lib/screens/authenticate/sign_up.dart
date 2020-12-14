@@ -17,7 +17,7 @@ class _SignUpState extends State<SignUp> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   final String innoMail = '@innopolis.ru';
-
+  final String innoMail2 = '@innopolis.university';
   String error = '';
   bool loading = false;
 
@@ -27,8 +27,6 @@ class _SignUpState extends State<SignUp> {
   String name = '';
   String yearId = 'bs17'; //constant for now
   // TODO: implement choosing study year
-
-  bool isAdmin = false;
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +66,10 @@ class _SignUpState extends State<SignUp> {
                     TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'email'),
-                      validator: (val) => val.endsWith(innoMail)
-                          ? null
-                          : 'Enter an Innopolis email',
+                      validator: (val) =>
+                          val.endsWith(innoMail) || val.endsWith(innoMail2)
+                              ? null
+                              : 'Enter an Innopolis email',
                       onChanged: (val) {
                         setState(() => email = val);
                       },
@@ -88,16 +87,6 @@ class _SignUpState extends State<SignUp> {
                       },
                     ),
                     SizedBox(height: 20.0),
-                    SwitchListTile(
-                      value: isAdmin,
-                      // onChanged: (val) {},
-                      onChanged: (val) => setState(() => isAdmin = !isAdmin),
-                      title: Text("Representative"),
-                      activeColor: ColorsStyle.primary,
-                      inactiveThumbColor: ColorsStyle.inactiveThumb,
-                      inactiveTrackColor: ColorsStyle.inactiveTrack,
-                    ),
-                    SizedBox(height: 20.0),
                     RaisedButton(
                         color: Colors.pink[400],
                         child: Text(
@@ -107,20 +96,15 @@ class _SignUpState extends State<SignUp> {
                         onPressed: () async {
                           if (_formKey.currentState.validate()) {
                             setState(() => loading = true);
-                            dynamic result = await _auth.signUp(
-                                email, password, name, yearId, isAdmin);
-                            if (!(result is User)) {
-                              if (result is String) {
-                                setState(() {
-                                  loading = false;
-                                  error = result;
-                                });
-                              } else {
-                                setState(() {
-                                  loading = false;
-                                  error = 'Please supply a valid email';
-                                });
-                              }
+                            User user = await _auth.signUp(
+                                email, password, name, yearId);
+                            if (user == null) {
+                              setState(() {
+                                loading = false;
+                                error = 'The email address is already in use';
+                              });
+                            } else {
+                              user.sendEmailVerification();
                             }
                           }
                         }),
