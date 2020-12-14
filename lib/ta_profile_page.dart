@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:innopolis_feedback/services/database.dart';
+import 'package:innopolis_feedback/shared/loading.dart';
 
 import 'data.dart';
 import 'ta_course_page.dart';
@@ -15,6 +18,10 @@ class TaProfilePage extends StatefulWidget {
 
 class _TaProfilePageState extends State<TaProfilePage> {
   TA ta;
+  String uid;
+  Student student;
+  DatabaseService db;
+  bool isFavorite = false;
 
   List<Course> courses = [];
 
@@ -22,6 +29,13 @@ class _TaProfilePageState extends State<TaProfilePage> {
     ta = await getTaById(widget.taId);
     setState(() {});
     getCourses();
+  }
+
+  getStudent() async {
+    student = await db.student;
+    setState(() {
+      isFavorite = student.isFavoriteTa(ta.id);
+    });
   }
 
   getCourses() async {
@@ -40,6 +54,9 @@ class _TaProfilePageState extends State<TaProfilePage> {
   @override
   void initState() {
     getTA();
+    uid = FirebaseAuth.instance.currentUser.uid;
+    db = DatabaseService(uid);
+    getStudent();
     super.initState();
   }
 
@@ -54,14 +71,37 @@ class _TaProfilePageState extends State<TaProfilePage> {
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('ID: ' + ta.id),
-                  Text('Name: ' + ta.name),
-                  Text('Rating: unimplemented/5'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          Text('ID: ' + ta.id),
+                          Text('Name: ' + ta.name),
+                          Text('Rating: unimplemented/5'),
+                        ],
+                      ),
+                      IconButton(
+                          icon: Icon(isFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_border),
+                          onPressed: () async {
+                            isFavorite
+                                ? student.favoriteTAs.remove(ta.id)
+                                : student.favoriteTAs.add(ta.id);
+                            await db.updateStudent(
+                                favoriteTAs: student.favoriteTAs);
+                            setState(() {
+                              isFavorite = student.isFavoriteTa(ta.id);
+                            });
+                          })
+                    ],
+                  ),
                   displayCourses(courses, selectCourse),
                   displayIssues(ta)
                 ],
               )
-            : Text('Loading ...'),
+            : Loading(),
       ),
     );
   }

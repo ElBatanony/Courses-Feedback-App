@@ -21,8 +21,11 @@ class Student {
   String id;
   String name;
   String yearId;
+  List<String> favoriteTAs;
 
-  Student(this.id, this.name, this.yearId);
+  Student(this.id, this.name, this.yearId, this.favoriteTAs);
+
+  bool isFavoriteTa(String taId) => favoriteTAs.contains(taId);
 }
 
 class TA {
@@ -60,6 +63,55 @@ class StudentFeedback {
 
   StudentFeedback(this.feedbackId, this.taId, this.courseId, this.message,
       this.uid, this.email, this.upvotes, this.downvotes);
+}
+
+class FeedbackComment {
+  String commentId;
+  // String feedbackId;
+  String uid;
+  String email;
+  DateTime date;
+  String text;
+
+  FeedbackComment(
+      this.commentId,
+      // this.feedbackId,
+      this.uid, this.email, this.date, this.text);
+}
+
+Stream<List<FeedbackComment>> getComments(String feedbackId) {
+  return db
+      .collection('feedback')
+      .doc(feedbackId)
+      .collection('comments')
+      .snapshots()
+      .map((snap) {
+    List<FeedbackComment> commentList = [];
+    snap.docs.forEach((doc) {
+      var commentData = doc.data();
+
+      FeedbackComment comment = new FeedbackComment(
+          doc.id,
+          // feedbackId,
+          commentData['uid'],
+          commentData['email'],
+          commentData['date'].toDate(),
+          commentData['text']
+      );
+      commentList.add(comment);
+    });
+    return commentList;
+  });
+}
+
+Future<void> submitComment(StudentFeedback f, FeedbackComment c) {
+  return db.collection('feedback').doc(f.feedbackId).collection('comments').add({
+    // "feedbackId": f.feedbackId,
+    "uid": c.uid,
+    "email": c.email,
+    "date": c.date,
+    "text": c.text
+  });
 }
 
 Future<List<Year>> getYears() async {

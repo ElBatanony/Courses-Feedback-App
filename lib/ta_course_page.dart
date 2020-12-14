@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:innopolis_feedback/feedback_form.dart';
+import 'package:innopolis_feedback/shared/bottom_navbar.dart';
+import 'package:innopolis_feedback/shared/resend_verifivaction_mail.dart';
 
 import 'data.dart';
 import 'ta_profile_page.dart';
@@ -99,25 +101,12 @@ class _TaCoursePageState extends State<TaCoursePage> {
                             FeedbackForm(taCourse),
                           ],
                         )
-                      : Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                            children: [
-                              Text(
-                                'You need to verify you account to leave feedback',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                              RaisedButton(
-                                child: Text('Resend verification mail'),
-                                onPressed: user.sendEmailVerification,
-                              )
-                            ],
-                          ),
-                      ),
+                      : ResendVerificationEmail(user),
                   Expanded(child: FeedbackDisplay(taCourse))
                 ],
               ),
       ),
+      bottomNavigationBar: BottomNavBar(),
     );
   }
 }
