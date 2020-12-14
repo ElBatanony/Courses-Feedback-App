@@ -62,9 +62,12 @@ class Student {
   List<String> favoriteTAs;
   String role;
 
-  Student(this.id, this.name, this.yearId, this.favoriteTAs, {this.role = 'student'});
+  Student(this.id, this.name, this.yearId, this.favoriteTAs,
+      {this.role = 'student'});
 
   bool isFavoriteTa(String taId) => favoriteTAs.contains(taId);
+
+  bool isAdmin() => role == "admin";
 }
 
 class TA {
@@ -106,6 +109,7 @@ class StudentFeedback {
 
 class FeedbackComment {
   String commentId;
+
   // String feedbackId;
   String uid;
   String email;
@@ -115,7 +119,10 @@ class FeedbackComment {
   FeedbackComment(
       this.commentId,
       // this.feedbackId,
-      this.uid, this.email, this.date, this.text);
+      this.uid,
+      this.email,
+      this.date,
+      this.text);
 }
 
 Stream<List<FeedbackComment>> getComments(String feedbackId) {
@@ -135,8 +142,7 @@ Stream<List<FeedbackComment>> getComments(String feedbackId) {
           commentData['uid'],
           commentData['email'],
           commentData['date'].toDate(),
-          commentData['text']
-      );
+          commentData['text']);
       commentList.add(comment);
     });
     return commentList;
@@ -144,7 +150,11 @@ Stream<List<FeedbackComment>> getComments(String feedbackId) {
 }
 
 Future<void> submitComment(StudentFeedback f, FeedbackComment c) {
-  return db.collection('feedback').doc(f.feedbackId).collection('comments').add({
+  return db
+      .collection('feedback')
+      .doc(f.feedbackId)
+      .collection('comments')
+      .add({
     // "feedbackId": f.feedbackId,
     "uid": c.uid,
     "email": c.email,
@@ -156,8 +166,16 @@ Future<void> submitComment(StudentFeedback f, FeedbackComment c) {
 Future<Student> getStudentById(String studentId) async {
   return db.collection('students').doc(studentId).get().then((studentDoc) {
     var studentData = studentDoc.data();
-    return new Student(studentDoc.id, studentData['name'],
-        studentData['yearId'], toStringList(studentData['favoriteTAs'] ?? []));
+    return new Student(
+        studentDoc.id,
+        studentData['name'],
+        studentData['yearId'],
+        studentData['favoriteTAs'] != null
+            ? studentData['favoriteTAs']
+            .map<String>((id) => id.toString())
+            .toList()
+            : [],
+        role: studentData['role'] ?? "student");
   });
 }
 
@@ -301,10 +319,7 @@ Future<void> updateTaName(String taId, String name) async {
 }
 
 Future<void> updateCourse(String id, String name, String yearId) async {
-  await db
-      .collection('courses')
-      .doc(id)
-      .set({'name': name, 'yearId': yearId});
+  await db.collection('courses').doc(id).set({'name': name, 'yearId': yearId});
 }
 
 Future<void> submitFeedback(StudentFeedback f, bool isAnonymous) {
@@ -451,8 +466,8 @@ Future<void> deleteAllFeedbackByStudent(String studentId) async {
   });
 }
 
-Future<void> deleteFeedbackByStudentInTaCourse(String studentId, String courseId,
-    String taId) async {
+Future<void> deleteFeedbackByStudentInTaCourse(String studentId,
+    String courseId, String taId) async {
   return await db
       .collection('feedback')
       .where('uid', isEqualTo: studentId)

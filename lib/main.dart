@@ -321,8 +321,8 @@ class _MyHomePageState extends State<MyHomePage> {
             future: getStudentById(_auth.getCurrentUserId()),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data.isAdmin) {
-                  isAdmin = snapshot.data.isAdmin;
+                if (snapshot.data.isAdmin()) {
+                  isAdmin = true;
                   return floatingActionButtonMenu(context);
                 } else {
                   return Container();
