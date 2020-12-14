@@ -96,50 +96,48 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: CustomAppBar(
-          title: 'Innopolis Feedback',
-          actions: <Widget>[
-            FlatButton.icon(
-              icon: Icon(Icons.person),
-              label: Text('Sign out?'),
-              onPressed: () => AuthService().signOut(),
-            ),
-          ],
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: FutureBuilder(
-                future: getYears(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    years = snapshot.data;
-                    if (selectedYear == null) {
-                      currentList = years;
-                      currentBuilder = yearItemBuilder;
-                    }
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(30),
-                      itemCount: currentList.length,
-                      itemBuilder: (context, index) =>
-                          currentBuilder(currentList[index]),
-                    );
+      backgroundColor: Colors.white,
+      appBar: CustomAppBar(
+        title: 'Innopolis Feedback',
+        actions: <Widget>[
+          FlatButton.icon(
+            icon: Icon(Icons.person),
+            label: Text('Sign out?'),
+            onPressed: () => AuthService().signOut(),
+          ),
+        ],
+        goBackIconVisible: selectedYear != null || selectedCourse != null,
+        onGoBack: goBack,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: FutureBuilder(
+              future: getYears(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  years = snapshot.data;
+                  if (selectedYear == null) {
+                    currentList = years;
+                    currentBuilder = yearItemBuilder;
                   }
-                  if (snapshot.hasError) {
-                    print(snapshot.error);
-                    return Text('Oops! Something went wrong :(');
-                  }
-                  return Loading();
-                },
-              ),
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(30),
+                    itemCount: currentList.length,
+                    itemBuilder: (context, index) =>
+                        currentBuilder(currentList[index]),
+                  );
+                }
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  return Text('Oops! Something went wrong :(');
+                }
+                return Loading();
+              },
             ),
-            if (selectedYear != null || selectedCourse != null)
-              RaisedButton(
-                child: Text('Back'),
-                onPressed: goBack,
-              )
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 }

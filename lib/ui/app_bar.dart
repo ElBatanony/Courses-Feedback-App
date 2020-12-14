@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends AppBar {
-  CustomAppBar({String title, List<Widget> actions})
+  CustomAppBar(
+      {String title,
+      List<Widget> actions,
+      Function onGoBack,
+      bool goBackIconVisible})
       : super(
           title: Text(
             title,
@@ -11,9 +15,17 @@ class CustomAppBar extends AppBar {
               letterSpacing: 0.18,
             ),
           ),
+          leading: goBackIconVisible
+              ? IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Colors.deepPurple[400],
+                  ),
+                  onPressed: onGoBack,
+                )
+              : null,
           actions: actions,
           backgroundColor: Colors.white,
           elevation: 0,
-          titleSpacing: 30,
         );
 }
