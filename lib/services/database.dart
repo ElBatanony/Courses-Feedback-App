@@ -10,19 +10,13 @@ class DatabaseService {
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('students');
 
-  Future<void> setStudent({String name, String yearId}) async {
-    return await userCollection
-        .doc(uid)
-        .set({'name': name, 'yearId': yearId, 'favoriteTAs': []});
-  }
-
   Future<void> updateStudent(
       {String name, String yearId, List<String> favoriteTAs}) async {
-    return await userCollection.doc(uid).update({
+    return await userCollection.doc(uid).set({
       if (name != null) 'name': name,
       if (yearId != null) 'yearId': yearId,
       if (favoriteTAs != null) 'favoriteTAs': favoriteTAs
-    });
+    }, SetOptions(merge: true));
   }
 
   Student _studentFromSnapshot(DocumentSnapshot snapshot) {

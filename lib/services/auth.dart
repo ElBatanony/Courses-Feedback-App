@@ -27,7 +27,7 @@ class AuthService {
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((response) async {
            await DatabaseService(response.user.uid)
-            .setStudent(name: name, yearId: yearId);
+            .updateStudent(name: name, yearId: yearId);
            return response.user;
       });
     } catch (error) {
