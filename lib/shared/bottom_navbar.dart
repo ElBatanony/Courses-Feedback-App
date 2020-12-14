@@ -34,8 +34,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
       if (index == 0) {
         goToCourses();
-      }
-      else if (index == 1) {
+      } else if (index == 1) {
         goToProfile();
       }
     }

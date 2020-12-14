@@ -4,6 +4,9 @@ import 'package:innopolis_feedback/data.dart';
 import 'package:innopolis_feedback/services/database.dart';
 import 'package:innopolis_feedback/shared/bottom_navbar.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
+import 'package:innopolis_feedback/ta_profile_page.dart';
+import 'package:innopolis_feedback/ui/app_bar.dart';
+import 'package:innopolis_feedback/ui/list_item.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -22,6 +25,13 @@ class _ProfileState extends State<Profile> {
     });
   }
 
+  taToWidget(TA ta) => ListItem(
+      title: ta.name,
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => TaProfilePage(ta.id, ta.name))));
+
   @override
   void initState() {
     user = FirebaseAuth.instance.currentUser;
@@ -34,21 +44,24 @@ class _ProfileState extends State<Profile> {
     return loading
         ? Loading()
         : Scaffold(
-            appBar:
-                AppBar(title: Text('profile')), //here would be Irek's navbar
+            appBar: CustomAppBar(title: student.name),
             body: Center(
-              child: Column(
-                //would be updated to Irek's list items
-                children: [
-                  Text(student.name),
-                  Text(student
-                      .yearId), //or delete or transform yeaId->Full year name
-                  ...student.favoriteTAs
-                      .map<Widget>((ta) => Text(ta.toString()))
-                      .toList()
-                ],
-              ),
-            ),
+                child: Column(
+              children: [
+                Text('You can visit one of your favorite TAs:'),
+                ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: student.favoriteTAs.length,
+                    itemBuilder: (context, index) {
+                      final taId = student.favoriteTAs[index];
+                      return FutureBuilder(
+                          future: getTaById(taId),
+                          builder: (context, snapshot) =>
+                              taToWidget(snapshot.data));
+                    }),
+              ],
+            )),
             bottomNavigationBar: BottomNavBar(
               defaultSelectedIndex: 1,
             ),
