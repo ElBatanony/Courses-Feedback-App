@@ -32,7 +32,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
         false) return;
 
     StudentFeedback f = new StudentFeedback('', widget.taCourse.taId,
-        widget.taCourse.courseId, controller.text, uid, email, [], []);
+        widget.taCourse.courseId, controller.text, uid, email, [], [], 0);
     await submitFeedback(f, isAnonymous);
     controller.clear();
     FocusScope.of(context).unfocus();
@@ -319,8 +319,10 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
                 var f = feedbackList[index];
                 bool upvoted = f.upvotes.contains(email);
                 bool downvoted = f.downvotes.contains(email);
-                // TODO: display a negative or toxic warning depending on the sentiment of the feedback
+                String message = f.message;
+                if (f.sentimentScore < -0.2) message = 'TOXIC: ' + message;
                 return ListTile(
+                  tileColor: f.isToxic() ? Colors.red : Colors.white,
                   title: Text(f.email),
                   subtitle: Text(f.message),
                   onTap: () => Navigator.push(context,

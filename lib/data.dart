@@ -92,9 +92,12 @@ class StudentFeedback {
   String feedbackId;
   String taId, courseId, message, uid, email;
   List<String> upvotes, downvotes; // List of emails
+  double sentimentScore;
 
   StudentFeedback(this.feedbackId, this.taId, this.courseId, this.message,
-      this.uid, this.email, this.upvotes, this.downvotes);
+      this.uid, this.email, this.upvotes, this.downvotes, this.sentimentScore);
+
+  bool isToxic() => sentimentScore < -0.1;
 }
 
 class FeedbackComment {
@@ -162,8 +165,8 @@ Future<Student> getStudentById(String studentId) async {
         studentData['yearId'],
         studentData['favoriteTAs'] != null
             ? studentData['favoriteTAs']
-            .map<String>((id) => id.toString())
-            .toList()
+                .map<String>((id) => id.toString())
+                .toList()
             : [],
         role: studentData['role'] ?? "student");
   });
@@ -338,6 +341,7 @@ Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
     List<StudentFeedback> feedbackList = [];
     snap.docs.forEach((doc) {
       var feedbackData = doc.data();
+      var sentimentObject = feedbackData['sentiment'] ?? {};
       StudentFeedback feedback = new StudentFeedback(
           doc.id,
           taCourse.taId,
@@ -346,7 +350,8 @@ Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
           feedbackData['uid'],
           feedbackData['email'],
           toStringList(feedbackData['upvotes'] ?? []),
-          toStringList(feedbackData['downvotes'] ?? []));
+          toStringList(feedbackData['downvotes'] ?? []),
+          sentimentObject['score'] ?? 0);
       feedbackList.add(feedback);
     });
     return feedbackList;
@@ -456,8 +461,8 @@ Future<void> deleteAllFeedbackByStudent(String studentId) async {
   });
 }
 
-Future<void> deleteFeedbackByStudentInTaCourse(String studentId,
-    String courseId, String taId) async {
+Future<void> deleteFeedbackByStudentInTaCourse(
+    String studentId, String courseId, String taId) async {
   return await db
       .collection('feedback')
       .where('uid', isEqualTo: studentId)
