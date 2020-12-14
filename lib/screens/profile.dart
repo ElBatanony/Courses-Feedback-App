@@ -62,18 +62,35 @@ class _ProfileState extends State<Profile> {
               onGoBack: () => Navigator.pop(context),
             ),
             body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(30.0),
                 child: Column(
-              children: [
-                Text('You can visit one of your favorite TAs:'),
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: tas.length,
-                      itemBuilder: (context, index) => taToWidget(tas[index])),
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Favourite TAs',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: tas.length,
+                        itemBuilder: (context, index) => taToWidget(tas[index]),
+                      ),
+                    ),
+                    SizedBox(height: 25),
+                    ActionButton(
+                      text: "Sign out",
+                      onPressed: AuthService().signOut,
+                    )
+                  ],
                 ),
-                ActionButton(
-                    text: "Sign out?", onPressed: AuthService().signOut)
-              ],
-            )),
+              ),
+            ),
             bottomNavigationBar: BottomNavBar(
               defaultSelectedIndex: 1,
             ),
