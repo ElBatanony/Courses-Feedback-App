@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide TextFormField;
+import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/screens/authenticate/auth_layout.dart';
 import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
@@ -59,7 +59,7 @@ class _SignInState extends State<SignIn> {
                   SizedBox(
                     height: 15,
                   ),
-                  TextFormField(
+                  CustomTextFormField(
                     placeholder: 'Email',
                     validator: (val) => val.isEmpty ? 'Enter an email' : null,
                     onChanged: (val) {
@@ -69,7 +69,7 @@ class _SignInState extends State<SignIn> {
                   SizedBox(
                     height: 30,
                   ),
-                  TextFormField(
+                  CustomTextFormField(
                     obscureText: true,
                     placeholder: 'Password',
                     validator: (val) => val.length < 6

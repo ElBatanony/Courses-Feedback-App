@@ -1,18 +1,18 @@
-import 'package:flutter/material.dart' as M;
+import 'package:flutter/material.dart';
 
-class AppBar extends M.AppBar {
-  AppBar({String title, List<M.Widget> actions})
+class CustomAppBar extends AppBar {
+  CustomAppBar({String title, List<Widget> actions})
       : super(
-          title: M.Text(
+          title: Text(
             title,
-            style: M.TextStyle(
-              color: M.Colors.deepPurple[400],
+            style: TextStyle(
+              color: Colors.deepPurple[400],
               fontSize: 24,
               letterSpacing: 0.18,
             ),
           ),
           actions: actions,
-          backgroundColor: M.Colors.white,
+          backgroundColor: Colors.white,
           elevation: 0,
           titleSpacing: 30,
         );

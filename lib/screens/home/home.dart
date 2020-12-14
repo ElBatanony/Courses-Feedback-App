@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide AppBar;
+import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
 import 'package:innopolis_feedback/ta_course_page.dart';
@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
+        appBar: CustomAppBar(
           title: 'Innopolis Feedback',
           actions: <Widget>[
             FlatButton.icon(

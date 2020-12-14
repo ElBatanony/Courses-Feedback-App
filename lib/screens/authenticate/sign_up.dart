@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart' hide TextFormField;
+import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/ui/text_form_field.dart';
 import 'package:innopolis_feedback/screens/authenticate/auth_layout.dart';
 import 'package:innopolis_feedback/services/auth.dart';
@@ -62,7 +62,7 @@ class _SignUpState extends State<SignUp> {
                       ),
                     ),
                   SizedBox(height: 15),
-                  TextFormField(
+                  CustomTextFormField(
                     placeholder: 'Name',
                     validator: (val) => val.isEmpty ? 'Enter your name' : null,
                     onChanged: (val) {
@@ -70,7 +70,7 @@ class _SignUpState extends State<SignUp> {
                     },
                   ),
                   SizedBox(height: 30.0),
-                  TextFormField(
+                  CustomTextFormField(
                     placeholder: 'Email',
                     validator: (val) =>
                         val.endsWith(innoMail) || val.endsWith(innoMail2)
@@ -81,7 +81,7 @@ class _SignUpState extends State<SignUp> {
                     },
                   ),
                   SizedBox(height: 30.0),
-                  TextFormField(
+                  CustomTextFormField(
                     placeholder: 'Password',
                     obscureText: true,
                     validator: (val) => val.length < 6

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart' as M;
+import 'package:flutter/material.dart';
 
-class TextFormField extends M.TextFormField {
-  TextFormField({
+class CustomTextFormField extends TextFormField {
+  CustomTextFormField({
     bool obscureText = false,
     String placeholder,
     String Function(String) validator,
@@ -10,10 +10,10 @@ class TextFormField extends M.TextFormField {
           obscureText: obscureText,
           validator: validator,
           onChanged: onChanged,
-          decoration: M.InputDecoration(
+          decoration: InputDecoration(
             labelText: placeholder,
-            border: M.OutlineInputBorder(
-              borderRadius: M.BorderRadius.circular(4.0),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4.0),
             ),
           ),
         );
