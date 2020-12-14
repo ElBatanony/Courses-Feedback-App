@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/data.dart';
 import 'package:innopolis_feedback/shared/resend_verifivaction_mail.dart';
 import 'package:innopolis_feedback/shared/styles.dart';
+import 'package:innopolis_feedback/ui/app_bar.dart';
 
 class FeedbackPage extends StatefulWidget {
   final StudentFeedback f;
@@ -20,7 +21,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
   User user;
 
   updateComments(List<FeedbackComment> c) {
-    c.sort((c1,c2) => c2.date.difference(c1.date).inMilliseconds);
+    c.sort((c1, c2) => c2.date.difference(c1.date).inMilliseconds);
     setState(() {
       comments = c;
     });
@@ -43,12 +44,18 @@ class _FeedbackPageState extends State<FeedbackPage> {
   }
 
   String prettyDate(DateTime date) =>
-      '${date.hour}:${date.minute} ${date.day}.${date.month}.${date.year}';
+      '${date.hour}:${date.minute}\n${date.day}.${date.month}.${date.year}';
 
   Widget commentToWidget(FeedbackComment c) => ListTile(
         title: Text(c.email),
         subtitle: Text(c.text),
-        trailing: Text(prettyDate(c.date)),
+        trailing: Text(
+          prettyDate(c.date),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.grey[600],
+          ),
+        ),
       );
 
   final commentHolder = TextEditingController();
@@ -65,40 +72,63 @@ class _FeedbackPageState extends State<FeedbackPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.f.email),
-          centerTitle: true,
-        ),
-        body: Column(
-          children: [
-            Text(widget.f.message),
-            emailVerified
-                ? TextField(
-                    controller: commentHolder,
-                    maxLines: null,
-                    onChanged: (val) {
-                      setState(() {
-                        commentText = val;
-                      });
-                    },
-                    decoration: textInputDecoration.copyWith(
-                      hintText: 'Comment',
-                      suffixIcon: commentText != ''
-                          ? IconButton(
-                              onPressed: submitCommentHandler,
-                              icon: Icon(Icons.send),
-                            )
-                          : SizedBox.shrink(),
-                    ),
-                  )
-                : ResendVerificationEmail(user),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: comments.length,
-                  itemBuilder: (context, index) =>
-                      commentToWidget(comments[index])),
+      appBar: CustomAppBar(
+        title: widget.f.email,
+      ),
+      backgroundColor: Colors.grey[50],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(15),
+            child: Card(
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text(widget.f.message),
+              ),
             ),
-          ],
-        ));
+          ),
+          emailVerified
+              ? TextField(
+                  controller: commentHolder,
+                  maxLines: null,
+                  onChanged: (val) {
+                    setState(() {
+                      commentText = val;
+                    });
+                  },
+                  decoration: textInputDecoration.copyWith(
+                    hintText: 'Comment',
+                    suffixIcon: commentText != ''
+                        ? IconButton(
+                            onPressed: submitCommentHandler,
+                            icon: Icon(Icons.send),
+                          )
+                        : SizedBox.shrink(),
+                  ),
+                )
+              : ResendVerificationEmail(user),
+          SizedBox(height: 10),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            child: Text(
+              'Comments:',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+                itemCount: comments.length,
+                itemBuilder: (context, index) =>
+                    commentToWidget(comments[index])),
+          ),
+        ],
+      ),
+    );
   }
 }

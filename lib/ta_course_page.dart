@@ -76,6 +76,7 @@ class _TaCoursePageState extends State<TaCoursePage> {
                   Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Card(
+                      elevation: 3,
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Column(

@@ -14,13 +14,13 @@ class ResendVerificationEmail extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              'You need to verify you account to act on this page',
+              'You need to verify your account to act on this page',
               style: TextStyle(color: Colors.deepPurple[500]),
             ),
             RaisedButton(
               color: Colors.deepPurple[100],
               textColor: Colors.deepPurple[900],
-              child: Text('Resend verification mail'),
+              child: Text('Resend verification email'),
               onPressed: user.sendEmailVerification,
             )
           ],
