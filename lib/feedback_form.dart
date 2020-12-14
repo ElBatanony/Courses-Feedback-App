@@ -160,6 +160,7 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
           var f = feedbackList[index];
           bool upvoted = f.upvotes.contains(email);
           bool downvoted = f.downvotes.contains(email);
+          // TODO: display a negative or toxic warning depending on the sentiment of the feedback
           return ListTile(
             title: Text(f.email),
             subtitle: Text(f.message),
