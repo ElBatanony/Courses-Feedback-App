@@ -8,6 +8,10 @@ class AuthService {
     return _auth.authStateChanges();
   }
 
+  String getCurrentUserId() {
+    return _auth.currentUser != null ? _auth.currentUser.uid : null;
+  }
+
   Future signIn(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
@@ -23,14 +27,16 @@ class AuthService {
   Future signUp(
       String email, String password, String name, String yearId) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      User user = result.user;
-      await DatabaseService(user.uid).updateStudent(name, yearId);
-      return user;
+      return _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((response) async {
+           await DatabaseService(response.user.uid)
+            .updateStudent(name: name, yearId: yearId);
+           return response.user;
+      });
     } catch (error) {
       print(error.toString());
-      return null;
+      return error.toString();
     }
   }
 
