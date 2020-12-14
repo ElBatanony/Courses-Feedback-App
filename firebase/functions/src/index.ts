@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+const language = require('@google-cloud/language');
 
 admin.initializeApp();
 
@@ -26,4 +27,23 @@ exports.modifyRating = functions.firestore
             newTaCourse['rating' + oldData.rating.toString()] = admin.firestore.FieldValue.arrayRemove(uid);
 
         return taCourseDoc.update(newTaCourse);
+    });
+
+exports.postFeedback = functions.firestore
+    .document('feedback/{feedbackId}')
+    .onCreate(async (snap, context) => {
+
+        const client = new language.LanguageServiceClient();
+
+        const feedbackData = snap.data();
+
+        const document = {
+            content: feedbackData.message || '',
+            type: 'PLAIN_TEXT',
+        };
+
+        const [result] = await client.analyzeSentiment({ document: document });
+        const sentiment = result.documentSentiment; // contains a score and a magnitude
+
+        return snap.ref.update({ sentiment });
     });
