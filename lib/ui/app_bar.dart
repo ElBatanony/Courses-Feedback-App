@@ -26,6 +26,7 @@ class CustomAppBar extends AppBar {
               : null,
           actions: actions,
           backgroundColor: Colors.white,
+          centerTitle: true,
           elevation: 0,
         );
 }
