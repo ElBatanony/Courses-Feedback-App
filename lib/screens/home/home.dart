@@ -122,7 +122,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     currentBuilder = yearItemBuilder;
                   }
                   return ListView.builder(
-                    padding: const EdgeInsets.all(30),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 15,
+                      horizontal: 30,
+                    ),
                     itemCount: currentList.length,
                     itemBuilder: (context, index) =>
                         currentBuilder(currentList[index]),

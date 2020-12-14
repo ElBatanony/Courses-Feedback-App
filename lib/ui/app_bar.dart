@@ -26,6 +26,12 @@ class CustomAppBar extends AppBar {
               : null,
           actions: actions,
           backgroundColor: Colors.white,
+          shape: Border(
+            bottom: BorderSide(
+              color: Colors.deepPurple[50],
+              width: 2,
+            ),
+          ),
           elevation: 0,
         );
 }
