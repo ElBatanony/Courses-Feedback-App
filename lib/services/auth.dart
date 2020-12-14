@@ -8,6 +8,10 @@ class AuthService {
     return _auth.authStateChanges();
   }
 
+  String getCurrentUserId() {
+    return _auth.currentUser != null ? _auth.currentUser.uid : null;
+  }
+
   Future signIn(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
@@ -32,6 +36,7 @@ class AuthService {
       });
     } catch (error) {
       print(error.toString());
+      return error.toString();
     }
   }
 

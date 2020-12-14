@@ -35,11 +35,14 @@ class _ProfileState extends State<Profile> {
   }
 
   taToWidget(TA ta) => ListItem(
-      title: ta.name,
-      onTap: () => Navigator.push(
+        title: ta.name,
+        onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => TaProfilePage(ta.id, ta.name))));
+            builder: (context) => TaProfilePage(ta.id, ta.name),
+          ),
+        ),
+      );
 
   @override
   void initState() {
@@ -71,7 +74,9 @@ class _ProfileState extends State<Profile> {
                     text: "Sign out?", onPressed: AuthService().signOut)
               ],
             )),
-            bottomNavigationBar: BottomNavBar(),
+            bottomNavigationBar: BottomNavBar(
+              defaultSelectedIndex: 1,
+            ),
           );
   }
 }

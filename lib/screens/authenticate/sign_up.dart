@@ -27,7 +27,8 @@ class _SignUpState extends State<SignUp> {
   String email = '';
   String password = '';
   String name = '';
-  String yearId = '1'; //constant for now
+  String yearId = 'bs17'; //constant for now
+  // TODO: implement choosing study year
 
   Future<void> handleRegister() async {
     if (_formKey.currentState.validate()) {
@@ -43,6 +44,8 @@ class _SignUpState extends State<SignUp> {
       }
     }
   }
+
+  // TODO: add live form validation
 
   @override
   Widget build(BuildContext context) {

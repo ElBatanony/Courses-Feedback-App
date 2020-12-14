@@ -17,15 +17,17 @@ class AuthLayout extends StatelessWidget {
     this.toggleViewHelpingText,
   });
 
+  // TODO: disable horizontal orientation
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.fromLTRB(
-          30,
+          0,
           MediaQuery.of(context).size.height * 0.0935,
-          30,
-          30,
+          0,
+          0,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -34,48 +36,59 @@ class AuthLayout extends StatelessWidget {
               dark: true,
               height: MediaQuery.of(context).size.height * 0.135,
             ),
+            SizedBox(height: 20),
             Expanded(
-              child: Center(
+              flex: 1,
+              child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: SingleChildScrollView(
-                    child: form,
+                  padding: const EdgeInsets.all(30),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.65,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        form,
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.065),
+                        Column(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              child: actionButton,
+                            ),
+                            SizedBox(height: 20),
+                            FlatButton(
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              padding:
+                                  EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    toggleViewHelpingText,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontWeight: FontWeight.normal),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    toggleViewButtonText,
+                                    style: TextStyle(
+                                      color: Colors.deepPurple[500],
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onPressed: () => onToggleView(),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Column(
-              children: <Widget>[
-                Container(
-                  width: double.infinity,
-                  child: actionButton,
-                ),
-                SizedBox(height: 20),
-                FlatButton(
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                  child: Column(
-                    children: [
-                      Text(
-                        toggleViewHelpingText,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.normal),
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        toggleViewButtonText,
-                        style: TextStyle(
-                          color: Colors.deepPurple[500],
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ],
-                  ),
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onPressed: () => onToggleView(),
-                )
-              ],
             ),
           ],
         ),

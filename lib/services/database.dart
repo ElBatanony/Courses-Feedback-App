@@ -29,7 +29,8 @@ class DatabaseService {
                 .data()['favoriteTAs']
                 .map<String>((id) => id.toString())
                 .toList()
-            : []);
+            : [],
+        role: snapshot.data()['role'] ?? "student");
   }
 
   Future<Student> get student =>
