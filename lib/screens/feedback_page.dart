@@ -39,11 +39,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
     email = user.email;
     emailVerified = user.emailVerified;
     fetchComments();
-    uid = FirebaseAuth.instance.currentUser.uid;
-    email = FirebaseAuth.instance.currentUser.email;
     super.initState();
   }
-
 
   String prettyDate(DateTime date) =>
       '${date.hour}:${date.minute} ${date.day}.${date.month}.${date.year}';
