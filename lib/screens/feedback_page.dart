@@ -17,6 +17,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
   String uid, email;
 
   updateComments(List<FeedbackComment> c) {
+    c.sort((c1,c2) => c2.date.difference(c1.date).inMilliseconds);
     setState(() {
       comments = c;
     });
