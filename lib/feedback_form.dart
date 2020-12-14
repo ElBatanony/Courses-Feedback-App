@@ -160,34 +160,6 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
     return updateVotes(f);
   }
 
-  Future<bool> areYouSure(String title, String message) async {
-    return await showDialog<bool>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              child: Text('Yes'),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-            TextButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-            ),
-          ],
-        );
-      },
-    ) ??
-        false;
-  }
-
   handleFeedbackLongPress(BuildContext context, StudentFeedback f) async {
     showModalBottomSheet<void>(
       context: context,
@@ -207,8 +179,10 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
                   representation = f.message.substring(0, 10) + "...";
                 }
                 try {
-                  if (await areYouSure("Delete feedback",
-                      "Are you sure you want to delete this feedback?")) {
+                  if (await areYouSure(
+                      "Delete feedback",
+                      "Are you sure you want to delete this feedback?",
+                      context)) {
                     await deleteFeedback(f);
                     showSuccessSnackBar(context,
                         "$itemType '$representation' successfully deleted!");
@@ -233,80 +207,79 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
             ),
             (isAdmin)
                 ? ListTile(
-              leading: Icon(Icons.delete_sweep),
-              title: Text('Delete all from user'),
-              onTap: () async {
-                var itemType = "Feedback";
-                Student student;
-                try {
-                  student = await getStudentById(f.uid);
-                  if (await areYouSure("Delete all feedback from user",
-                      "Are you sure you want to delete all feedback left here from this user?")) {
-                    await deleteFeedbackByStudentInTaCourse(
-                        f.uid, f.courseId, f.taId);
-                    showSuccessSnackBar(context,
-                        "All $itemType from ${student
-                            .name} successfully deleted!");
-                  }
-                } catch (e, p) {
-                  print(e.toString() + ' ' + p.toString());
-                  if (e.toString().contains("] ")) {
-                    showErrorSnackBar(
-                        context,
-                        "Unable to delete $itemType from ${student.name ??
-                            "User"}.",
-                        e.toString().split("] ")[1]);
-                  } else {
-                    showErrorSnackBar(
-                        context,
-                        "Unable to delete $itemType from ${student.name ??
-                            "User"}.",
-                        e.toString());
-                  }
-                }
-                await fetchFeedback();
-                Navigator.pop(context);
-              },
-            )
+                    leading: Icon(Icons.delete_sweep),
+                    title: Text('Delete all from user'),
+                    onTap: () async {
+                      var itemType = "Feedback";
+                      Student student;
+                      try {
+                        student = await getStudentById(f.uid);
+                        if (await areYouSure(
+                            "Delete all feedback from user",
+                            "Are you sure you want to delete all feedback left here from this user?",
+                            context)) {
+                          await deleteFeedbackByStudentInTaCourse(
+                              f.uid, f.courseId, f.taId);
+                          showSuccessSnackBar(context,
+                              "All $itemType from ${student.name} successfully deleted!");
+                        }
+                      } catch (e, p) {
+                        print(e.toString() + ' ' + p.toString());
+                        if (e.toString().contains("] ")) {
+                          showErrorSnackBar(
+                              context,
+                              "Unable to delete $itemType from ${student.name ?? "User"}.",
+                              e.toString().split("] ")[1]);
+                        } else {
+                          showErrorSnackBar(
+                              context,
+                              "Unable to delete $itemType from ${student.name ?? "User"}.",
+                              e.toString());
+                        }
+                      }
+                      await fetchFeedback();
+                      Navigator.pop(context);
+                    },
+                  )
                 : Container(),
             (isAdmin)
                 ? ListTile(
-              leading: Icon(Icons.person_remove),
-              title: Text('Delete user'),
-              onTap: () async {
-                var itemType = "User";
-                Student student;
-                try {
-                  student = await getStudentById(f.uid);
-                  if (f.uid == _auth.getCurrentUserId()) {
-                    throw Exception("You can't delete yourself");
-                  }
-                  if (await areYouSure("Delete user",
-                      "Are you sure you want to delete this user and all related feedback?")) {
-                    await deleteStudent(f.uid);
-                    showSuccessSnackBar(context,
-                        "$itemType '${student.name}' successfully deleted!");
-                  }
-                } catch (e, p) {
-                  print(e.toString() + ' ' + p.toString());
-                  if (e.toString().contains("] ")) {
-                    showErrorSnackBar(
-                        context,
-                        "Unable to delete $itemType '${student.name ??
-                            "username"}'.",
-                        e.toString().split("] ")[1]);
-                  } else {
-                    showErrorSnackBar(
-                        context,
-                        "Unable to delete $itemType '${student.name ??
-                            "username"}'.",
-                        e.toString());
-                  }
-                }
-                await fetchFeedback();
-                Navigator.pop(context);
-              },
-            )
+                    leading: Icon(Icons.person_remove),
+                    title: Text('Delete user'),
+                    onTap: () async {
+                      var itemType = "User";
+                      Student student;
+                      try {
+                        student = await getStudentById(f.uid);
+                        if (f.uid == _auth.getCurrentUserId()) {
+                          throw Exception("You can't delete yourself");
+                        }
+                        if (await areYouSure(
+                            "Delete user",
+                            "Are you sure you want to delete this user and all related feedback?",
+                            context)) {
+                          await deleteStudent(f.uid);
+                          showSuccessSnackBar(context,
+                              "$itemType '${student.name}' successfully deleted!");
+                        }
+                      } catch (e, p) {
+                        print(e.toString() + ' ' + p.toString());
+                        if (e.toString().contains("] ")) {
+                          showErrorSnackBar(
+                              context,
+                              "Unable to delete $itemType '${student.name ?? "username"}'.",
+                              e.toString().split("] ")[1]);
+                        } else {
+                          showErrorSnackBar(
+                              context,
+                              "Unable to delete $itemType '${student.name ?? "username"}'.",
+                              e.toString());
+                        }
+                      }
+                      await fetchFeedback();
+                      Navigator.pop(context);
+                    },
+                  )
                 : Container(),
           ],
         );
@@ -346,10 +319,8 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
                 return ListTile(
                   title: Text(f.email),
                   subtitle: Text(f.message),
-                  onTap: () =>
-                      Navigator.push(context,
-                          MaterialPageRoute(
-                              builder: (context) => FeedbackPage(f))),
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => FeedbackPage(f))),
                   onLongPress: (f.uid == uid || isAdmin)
                       ? () => handleFeedbackLongPress(context, f)
                       : null,
@@ -390,4 +361,33 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
           }),
     );
   }
+}
+
+Future<bool> areYouSure(
+    String title, String message, BuildContext context) async {
+  return await showDialog<bool>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                child: Text('Yes'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+              TextButton(
+                child: Text('No'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+            ],
+          );
+        },
+      ) ??
+      false;
 }
