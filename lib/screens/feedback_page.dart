@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/data.dart';
+import 'package:innopolis_feedback/shared/resend_verifivaction_mail.dart';
 import 'package:innopolis_feedback/shared/styles.dart';
 
 class FeedbackPage extends StatefulWidget {
@@ -14,7 +15,9 @@ class FeedbackPage extends StatefulWidget {
 
 class _FeedbackPageState extends State<FeedbackPage> {
   List<FeedbackComment> comments = [];
-  String uid, email;
+  String uid, email, commentText = '';
+  bool emailVerified;
+  User user;
 
   updateComments(List<FeedbackComment> c) {
     c.sort((c1,c2) => c2.date.difference(c1.date).inMilliseconds);
@@ -31,6 +34,10 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   @override
   void initState() {
+    user = FirebaseAuth.instance.currentUser;
+    uid = user.uid;
+    email = user.email;
+    emailVerified = user.emailVerified;
     fetchComments();
     uid = FirebaseAuth.instance.currentUser.uid;
     email = FirebaseAuth.instance.currentUser.email;
@@ -49,22 +56,45 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   final commentHolder = TextEditingController();
 
+  void submitCommentHandler() {
+    submitComment(
+        widget.f, FeedbackComment('', uid, email, DateTime.now(), commentText));
+    commentHolder.clear();
+    setState(() {
+      commentText = '';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(widget.f.email), centerTitle: true,),
+        appBar: AppBar(
+          title: Text(widget.f.email),
+          centerTitle: true,
+        ),
         body: Column(
           children: [
             Text(widget.f.message),
-            TextField(
-              controller: commentHolder,
-              onSubmitted: (String comment) {
-                submitComment(widget.f,
-                    FeedbackComment('', uid, email, DateTime.now(), comment));
-                commentHolder.clear();
-              },
-              decoration: textInputDecoration.copyWith(hintText: 'Comment'),
-            ),
+            emailVerified
+                ? TextField(
+                    controller: commentHolder,
+                    maxLines: null,
+                    onChanged: (val) {
+                      setState(() {
+                        commentText = val;
+                      });
+                    },
+                    decoration: textInputDecoration.copyWith(
+                      hintText: 'Comment',
+                      suffixIcon: commentText != ''
+                          ? IconButton(
+                              onPressed: submitCommentHandler,
+                              icon: Icon(Icons.send),
+                            )
+                          : SizedBox.shrink(),
+                    ),
+                  )
+                : ResendVerificationEmail(user),
             Expanded(
               child: ListView.builder(
                   itemCount: comments.length,
