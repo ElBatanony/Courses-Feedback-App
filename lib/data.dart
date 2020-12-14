@@ -48,12 +48,10 @@ class Course {
 class Student {
   String id;
   String name;
-  String yearId;
   List<String> favoriteTAs;
   String role;
 
-  Student(this.id, this.name, this.yearId, this.favoriteTAs,
-      {this.role = 'student'});
+  Student(this.id, this.name, this.favoriteTAs, {this.role = 'student'});
 
   bool isFavoriteTa(String taId) => favoriteTAs.contains(taId);
 
@@ -162,7 +160,6 @@ Future<Student> getStudentById(String studentId) async {
     return new Student(
         studentDoc.id,
         studentData['name'],
-        studentData['yearId'],
         studentData['favoriteTAs'] != null
             ? studentData['favoriteTAs']
                 .map<String>((id) => id.toString())
