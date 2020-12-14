@@ -27,13 +27,11 @@ class _SignUpState extends State<SignUp> {
   String email = '';
   String password = '';
   String name = '';
-  String yearId = 'bs17'; //constant for now
-  // TODO: implement choosing study year
 
   Future<void> handleRegister() async {
     if (_formKey.currentState.validate()) {
       setState(() => loading = true);
-      User user = await _auth.signUp(email, password, name, yearId);
+      User user = await _auth.signUp(email, password, name);
       if (user == null) {
         setState(() {
           loading = false;

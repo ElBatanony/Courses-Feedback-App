@@ -27,15 +27,19 @@ class _FeedbackFormState extends State<FeedbackForm> {
   }
 
   handleSubmitFeedback() async {
-    // TODO: show a confirmation message (ex: Are you sure?)
+    if (await areYouSure("Submit feedback",
+            "Are you sure you want to submit this feedback?", context) ==
+        false) return;
+
     StudentFeedback f = new StudentFeedback('', widget.taCourse.taId,
-        widget.taCourse.courseId, controller.text, uid, email, [], []);
+        widget.taCourse.courseId, controller.text, uid, email, [], [], 0);
     await submitFeedback(f, isAnonymous);
-    controller.text = '';
+    controller.clear();
+    FocusScope.of(context).unfocus();
     setState(() {
       isAnonymous = false;
     });
-    // TODO: display a notification (snackbar) to show that feedback was sent
+    showSuccessSnackBar(context, "Feedback submitted successfully!");
   }
 
   @override
@@ -160,34 +164,6 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
     return updateVotes(f);
   }
 
-  Future<bool> areYouSure(String title, String message) async {
-    return await showDialog<bool>(
-          context: context,
-          barrierDismissible: true,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(title),
-              content: Text(message),
-              actions: [
-                TextButton(
-                  child: Text('Yes'),
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                ),
-                TextButton(
-                  child: Text('No'),
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
-  }
-
   handleFeedbackLongPress(BuildContext context, StudentFeedback f) async {
     showModalBottomSheet<void>(
       context: context,
@@ -207,8 +183,10 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
                   representation = f.message.substring(0, 10) + "...";
                 }
                 try {
-                  if (await areYouSure("Delete feedback",
-                      "Are you sure you want to delete this feedback?")) {
+                  if (await areYouSure(
+                      "Delete feedback",
+                      "Are you sure you want to delete this feedback?",
+                      context)) {
                     await deleteFeedback(f);
                     showSuccessSnackBar(context,
                         "$itemType '$representation' successfully deleted!");
@@ -240,8 +218,10 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
                       Student student;
                       try {
                         student = await getStudentById(f.uid);
-                        if (await areYouSure("Delete all feedback from user",
-                            "Are you sure you want to delete all feedback left here from this user?")) {
+                        if (await areYouSure(
+                            "Delete all feedback from user",
+                            "Are you sure you want to delete all feedback left here from this user?",
+                            context)) {
                           await deleteFeedbackByStudentInTaCourse(
                               f.uid, f.courseId, f.taId);
                           showSuccessSnackBar(context,
@@ -278,8 +258,10 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
                         if (f.uid == _auth.getCurrentUserId()) {
                           throw Exception("You can't delete yourself");
                         }
-                        if (await areYouSure("Delete user",
-                            "Are you sure you want to delete this user and all related feedback?")) {
+                        if (await areYouSure(
+                            "Delete user",
+                            "Are you sure you want to delete this user and all related feedback?",
+                            context)) {
                           await deleteStudent(f.uid);
                           showSuccessSnackBar(context,
                               "$itemType '${student.name}' successfully deleted!");
@@ -337,8 +319,10 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
                 var f = feedbackList[index];
                 bool upvoted = f.upvotes.contains(email);
                 bool downvoted = f.downvotes.contains(email);
-                // TODO: display a negative or toxic warning depending on the sentiment of the feedback
+                String message = f.message;
+                if (f.sentimentScore < -0.2) message = 'TOXIC: ' + message;
                 return ListTile(
+                  tileColor: f.isToxic() ? Color.fromRGBO(255, 0, 0, 0.15) : Colors.white,
                   title: Text(f.email),
                   subtitle: Text(f.message),
                   onTap: () => Navigator.push(context,
@@ -384,4 +368,33 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
           }),
     );
   }
+}
+
+Future<bool> areYouSure(
+    String title, String message, BuildContext context) async {
+  return await showDialog<bool>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                child: Text('Yes'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+              TextButton(
+                child: Text('No'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+            ],
+          );
+        },
+      ) ??
+      false;
 }
