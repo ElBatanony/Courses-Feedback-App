@@ -27,7 +27,10 @@ class _FeedbackFormState extends State<FeedbackForm> {
   }
 
   handleSubmitFeedback() async {
-    // TODO: show a confirmation message (ex: Are you sure?)
+    if (await areYouSure("Submit feedback",
+            "Are you sure you want to submit this feedback?", context) ==
+        false) return;
+
     StudentFeedback f = new StudentFeedback('', widget.taCourse.taId,
         widget.taCourse.courseId, controller.text, uid, email, [], []);
     await submitFeedback(f, isAnonymous);
