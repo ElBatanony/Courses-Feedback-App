@@ -23,7 +23,7 @@ class AuthService {
   Future signUp(
       String email, String password, String name, String yearId) async {
     try {
-      _auth
+      return _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((response) async {
            await DatabaseService(response.user.uid)

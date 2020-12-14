@@ -22,12 +22,14 @@ class DatabaseService {
   Student _studentFromSnapshot(DocumentSnapshot snapshot) {
     return Student(
         uid,
-        snapshot.data()['name'],
-        snapshot.data()['yearId'],
-        snapshot
-            .data()['favoriteTAs']
-            .map<String>((id) => id.toString())
-            .toList());
+        snapshot.data()['name'] ?? 'No name',
+        snapshot.data()['yearId'] ?? 'No year',
+        snapshot.data()['favoriteTAs'] != null
+            ? snapshot
+                .data()['favoriteTAs']
+                .map<String>((id) => id.toString())
+                .toList()
+            : []);
   }
 
   Future<Student> get student =>
