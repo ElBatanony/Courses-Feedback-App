@@ -39,7 +39,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
     setState(() {
       isAnonymous = false;
     });
-    // TODO: display a notification (snackbar) to show that feedback was sent
+    showSuccessSnackBar(context, "Feedback submitted successfully!");
   }
 
   @override
