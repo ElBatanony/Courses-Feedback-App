@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
 import 'package:innopolis_feedback/ta_course_page.dart';
 import 'package:innopolis_feedback/data.dart';
@@ -99,13 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
         title: 'Innopolis Feedback',
-        actions: <Widget>[
-          FlatButton.icon(
-            icon: Icon(Icons.person),
-            label: Text('Sign out?'),
-            onPressed: () => AuthService().signOut(),
-          ),
-        ],
         goBackIconVisible: selectedYear != null || selectedCourse != null,
         onGoBack: goBack,
       ),
