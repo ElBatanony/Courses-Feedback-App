@@ -21,8 +21,11 @@ class Student {
   String id;
   String name;
   String yearId;
+  List<String> favoriteTAs;
 
-  Student(this.id, this.name, this.yearId);
+  Student(this.id, this.name, this.yearId, this.favoriteTAs);
+
+  bool isFavoriteTa(String taId) => favoriteTAs.contains(taId);
 }
 
 class TA {
