@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:innopolis_feedback/screens/addCourse.dart';
+import 'package:innopolis_feedback/screens/editCourse.dart';
 import 'package:innopolis_feedback/screens/addTA.dart';
+import 'package:innopolis_feedback/screens/editTA.dart';
 import 'package:innopolis_feedback/screens/wrapper.dart';
 import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/shared/FloatingActionButtonMenu.dart';
@@ -53,15 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
   List currentList;
   Function currentBuilder;
 
-  T tryCast<T>(dynamic x, {T fallback}) {
-    try {
-      return (x as T);
-    } on TypeError catch (e) {
-      print('CastError when trying to cast $x to $T! \n($e)');
-      return fallback;
-    }
-  }
-
   goBack() async {
     if (selectedCourse != null) {
       await selectYear(selectedYear);
@@ -74,11 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
         selectedYear = null;
       });
     }
-  }
-
-  fetchPrivilege() async {
-    Student student = await getStudentById(_auth.getCurrentUserId());
-    isAdmin = student.isAdmin;
   }
 
   selectYear(Year year) async {
@@ -121,10 +109,30 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget courseItemBuilder(Course course) {
     if (isAdmin) {
-      return ListTile(
-        title: Text(course.name),
-        onTap: () => selectCourse(course),
-        trailing: trailingPopupMenu(course),
+      return Builder(
+        builder: (context) => ListTile(
+          title: Text(course.name),
+          onTap: () => selectCourse(course),
+          trailing: trailingPopupMenu(course, "Course", course.name, () async {
+            await deleteCourse(course.id);
+          }, () async {
+            await selectYear(selectedYear);
+          }, () async {
+            final result = tryCast<bool>(
+                await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditCourse(course))) ??
+                    false,
+                fallback: false);
+            if (result) {
+              showSuccessSnackBar(context, "Course successfully edited!");
+            }
+            if (selectedCourse != null) {
+              await selectCourse(selectedCourse);
+            }
+          }),
+        ),
       );
     } else {
       return ListTile(
@@ -135,10 +143,30 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget taItemBuilder(TA ta) {
     if (isAdmin) {
-      return ListTile(
-        title: Text(ta.name),
-        onTap: () => selectTA(ta),
-        trailing: trailingPopupMenu(ta),
+      return Builder(
+        builder: (context) =>
+            ListTile(
+                title: Text(ta.name),
+                onTap: () => selectTA(ta),
+                trailing: trailingPopupMenu(ta, "TA", ta.name, () async {
+                  await deleteTA(ta.id);
+                }, () async {
+                  await selectCourse(selectedCourse);
+                }, () async {
+                  final result = tryCast<bool>(
+                      await Navigator.push(context,
+                          MaterialPageRoute(
+                              builder: (context) => EditTA(ta))) ??
+                          false,
+                      fallback: false);
+                  if (result) {
+                    showSuccessSnackBar(context, "TA successfully edited!");
+                  }
+                  if (selectedCourse != null) {
+                    await selectCourse(selectedCourse);
+                  }
+                })
+            ),
       );
     } else {
       return ListTile(
@@ -148,54 +176,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void showSuccessSnackBar(BuildContext context, String message) {
-    Scaffold.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(
-          backgroundColor: ColorsStyle.success, content: Text(message)));
-  }
-
-  void showErrorSnackBar(BuildContext context, String message, String error) {
-    Scaffold.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(
-          duration: Duration(seconds: 6),
-          backgroundColor: ColorsStyle.error,
-          content: RichText(
-            text: TextSpan(text: message, children: <TextSpan>[
-              TextSpan(text: '\nReason: '),
-              TextSpan(
-                  text: error, style: TextStyle(fontWeight: FontWeight.bold))
-            ]),
-          )));
-  }
-
-  Widget trailingPopupMenu(dynamic selectedItem) {
-    String itemType;
-    String representation;
-    Function delete;
-    Function update;
-
-    if (selectedItem is Course) {
-      itemType = "Course";
-      representation = selectedItem.name;
-      delete = () async {
-        await deleteCourse(selectedItem.id);
-      };
-      update = () async {
-        await selectYear(selectedYear);
-      };
-    } else if (selectedItem is TA) {
-      itemType = "TA";
-      representation = selectedItem.name;
-      delete = () async {
-        await deleteTA(selectedItem.id);
-      };
-      update = () async {
-        await selectCourse(selectedCourse);
-      };
-    }
-
+  Widget trailingPopupMenu(dynamic selectedItem, String itemType,
+      String representation, Function delete, Function update, Function edit) {
     return Builder(
       builder: (context) {
         return PopupMenuButton(
@@ -203,8 +185,6 @@ class _MyHomePageState extends State<MyHomePage> {
             onSelected: (value) async {
               switch (value) {
                 case "remove":
-                  print(
-                      "Delete button is pushed---------------------------------------------------------------");
                   try {
                     await delete();
                     showSuccessSnackBar(context,
@@ -229,6 +209,29 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                   await update();
                   break;
+                case "edit":
+                  try {
+                    await edit();
+                  } catch (e) {
+                    print(e.toString());
+                    if (e.toString().contains("] ")) {
+                      showErrorSnackBar(
+                          context,
+                          "Unable to edit $itemType \'" +
+                              selectedItem.id +
+                              "\'.",
+                          e.toString().split("] ")[1]);
+                    } else {
+                      showErrorSnackBar(
+                          context,
+                          "Unable to edit $itemType \'" +
+                              selectedItem.id +
+                              "\'.",
+                          e.toString());
+                    }
+                  }
+                  await update();
+                  break;
               }
             },
             itemBuilder: (context) => [
@@ -243,7 +246,18 @@ class _MyHomePageState extends State<MyHomePage> {
                           Text('Delete')
                         ],
                       )),
-                ]);
+              PopupMenuItem(
+                  value: "edit",
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(2, 2, 8, 2),
+                        child: Icon(Icons.edit),
+                      ),
+                      Text('Edit')
+                    ],
+                  )),
+            ]);
       },
     );
   }
@@ -261,7 +275,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           MaterialPageRoute(builder: (context) => AddTA())) ??
                       false,
                   fallback: false);
-              print("Result from addTA: " + result.toString());
               if (result) {
                 showSuccessSnackBar(context, "TA successfully added!");
               }
@@ -283,7 +296,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             builder: (context) => AddCourse())) ??
                         false,
                     fallback: false);
-                print("Result from addCourse: " + result.toString());
                 if (result) {
                   showSuccessSnackBar(context, "Course successfully added!");
                 }
@@ -373,4 +385,34 @@ class _MyHomePageState extends State<MyHomePage> {
           )),
     );
   }
+}
+
+T tryCast<T>(dynamic x, {T fallback}) {
+  try {
+    return (x as T);
+  } on TypeError catch (e) {
+    print('CastError when trying to cast $x to $T! \n($e)');
+    return fallback;
+  }
+}
+
+void showSuccessSnackBar(BuildContext context, String message) {
+  Scaffold.of(context)
+    ..removeCurrentSnackBar()
+    ..showSnackBar(
+        SnackBar(backgroundColor: ColorsStyle.success, content: Text(message)));
+}
+
+void showErrorSnackBar(BuildContext context, String message, String error) {
+  Scaffold.of(context)
+    ..removeCurrentSnackBar()
+    ..showSnackBar(SnackBar(
+        duration: Duration(seconds: 6),
+        backgroundColor: ColorsStyle.error,
+        content: RichText(
+          text: TextSpan(text: message, children: <TextSpan>[
+            TextSpan(text: '\nReason: '),
+            TextSpan(text: error, style: TextStyle(fontWeight: FontWeight.bold))
+          ]),
+        )));
 }
