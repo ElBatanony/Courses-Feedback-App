@@ -40,6 +40,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     }
 
     return BottomNavigationBar(
+      backgroundColor: Colors.white,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.list),

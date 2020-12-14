@@ -356,7 +356,7 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
                   leading: Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: upvoted ? Colors.yellow : null),
+                        color: upvoted ? Colors.deepPurple[100] : null),
                     constraints: BoxConstraints(maxWidth: 72),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,

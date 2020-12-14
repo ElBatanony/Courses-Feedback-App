@@ -319,7 +319,6 @@ class _MyHomePageState extends State<MyHomePage> {
             return Loading();
           },
         ),
-        backgroundColor: Colors.white,
         appBar: CustomAppBar(
           title: 'TA Feedback',
           goBackIconVisible: selectedYear != null || selectedCourse != null,
