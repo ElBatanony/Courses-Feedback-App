@@ -49,7 +49,7 @@ class AuthLayout extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         form,
-                        SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.065),
                         Column(
                           children: [
                             Container(

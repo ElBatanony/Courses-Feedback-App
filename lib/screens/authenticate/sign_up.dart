@@ -44,6 +44,8 @@ class _SignUpState extends State<SignUp> {
     }
   }
 
+  // TODO: add live form validation
+
   @override
   Widget build(BuildContext context) {
     return loading
