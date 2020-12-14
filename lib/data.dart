@@ -12,6 +12,20 @@ class Year {
   String toString() {
     return "Year(id: $id, name: $name)";
   }
+
+  @override
+  bool operator ==(Object other) {
+    try {
+      // ignore: test_types_in_equals
+      return this.id == (other as Year).id;
+    } on TypeError {
+      return false;
+    }
+  }
+
+  @override
+  // TODO: implement hashCode
+  int get hashCode => super.hashCode;
 }
 
 class Course {
@@ -37,8 +51,9 @@ class Course {
   }
 
   @override
-  // TODO: implement hashCode
-  int get hashCode => super.hashCode;
+  int get hashCode {
+    return this.id.hashCode + this.name.hashCode;
+  }
 }
 
 class Student {
@@ -71,9 +86,10 @@ class TaCourse {
 }
 
 class StudentFeedback {
-  String taId, courseId, message, uid, email;
+  String taId, courseId, message, uid, email, id;
 
-  StudentFeedback(this.taId, this.courseId, this.message, this.uid, this.email);
+  StudentFeedback(
+      this.taId, this.courseId, this.message, this.uid, this.email, this.id);
 }
 
 Future<Student> getStudentById(String studentId) async {
@@ -217,6 +233,17 @@ Future<void> updateRating(String taCourseId, String uid, int rating) {
   // TODO: update average rating of ta-course-pair using firestore triggers
 }
 
+Future<void> updateTaName(String taId, String name) async {
+  return await db.collection('tas').doc(taId).set({'name': name});
+}
+
+Future<void> updateCourse(String id, String name, String yearId) async {
+  await db
+      .collection('courses')
+      .doc(id)
+      .set({'name': name, 'yearId': yearId});
+}
+
 Future<void> submitFeedback(StudentFeedback f, bool isAnonymous) {
   return db.collection('feedback').add({
     "taId": f.taId,
@@ -242,7 +269,8 @@ Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
           taCourse.courseId,
           feedbackData['message'],
           feedbackData['uid'],
-          feedbackData['email']);
+          feedbackData['email'],
+          doc.id);
       feedbackList.add(feedback);
     });
     return feedbackList;
@@ -260,7 +288,9 @@ Future<void> deleteCourse(String courseId) async {
       ds.reference.delete();
     }
   });
-  await db.collection('feedback').where('courseId', isEqualTo: courseId)
+  await db
+      .collection('feedback')
+      .where('courseId', isEqualTo: courseId)
       .get()
       .then((snapshot) {
     for (DocumentSnapshot ds in snapshot.docs) {
@@ -271,7 +301,32 @@ Future<void> deleteCourse(String courseId) async {
 
 Future<void> deleteStudent(String studentId) async {
   await db.collection('students').doc(studentId).delete();
-  await db.collection('feedback').where('uid', isEqualTo: studentId)
+  await db
+      .collection('feedback')
+      .where('uid', isEqualTo: studentId)
+      .get()
+      .then((snapshot) {
+    for (DocumentSnapshot ds in snapshot.docs) {
+      ds.reference.delete();
+    }
+  });
+}
+
+Future<void> deleteTaCourse(String taId, String courseId) async {
+  await db
+      .collection('ta-course')
+      .where('taId', isEqualTo: taId)
+      .where('courseId', isEqualTo: courseId)
+      .get()
+      .then((snapshot) {
+    for (DocumentSnapshot ds in snapshot.docs) {
+      ds.reference.delete();
+    }
+  });
+  return await db
+      .collection('feedback')
+      .where('taId', isEqualTo: taId)
+      .where('courseId', isEqualTo: courseId)
       .get()
       .then((snapshot) {
     for (DocumentSnapshot ds in snapshot.docs) {
@@ -282,14 +337,20 @@ Future<void> deleteStudent(String studentId) async {
 
 Future<void> deleteTA(String taId) async {
   await db.collection('tas').doc(taId).delete();
-  await db.collection('ta-course').where('taId', isEqualTo: taId).get().then((
-      snapshot) {
+  await db
+      .collection('ta-course')
+      .where('taId', isEqualTo: taId)
+      .get()
+      .then((snapshot) {
     for (DocumentSnapshot ds in snapshot.docs) {
       ds.reference.delete();
     }
   });
-  await db.collection('feedback').where('taId', isEqualTo: taId).get().then((
-      snapshot) {
+  return await db
+      .collection('feedback')
+      .where('taId', isEqualTo: taId)
+      .get()
+      .then((snapshot) {
     for (DocumentSnapshot ds in snapshot.docs) {
       ds.reference.delete();
     }
@@ -298,4 +359,31 @@ Future<void> deleteTA(String taId) async {
 
 Future<void> deleteFeedback(String feedbackId) async {
   await db.collection('feedback').doc(feedbackId).delete();
+}
+
+Future<void> deleteAllFeedbackByStudent(String studentId) async {
+  return await db
+      .collection('feedback')
+      .where('uid', isEqualTo: studentId)
+      .get()
+      .then((snapshot) {
+    for (DocumentSnapshot ds in snapshot.docs) {
+      ds.reference.delete();
+    }
+  });
+}
+
+Future<void> deleteFeedbackByStudentTaCourse(String studentId, String courseId,
+    String taId) async {
+  return await db
+      .collection('feedback')
+      .where('uid', isEqualTo: studentId)
+      .where('courseId', isEqualTo: courseId)
+      .where('taId', isEqualTo: taId)
+      .get()
+      .then((snapshot) {
+    for (DocumentSnapshot ds in snapshot.docs) {
+      ds.reference.delete();
+    }
+  });
 }
