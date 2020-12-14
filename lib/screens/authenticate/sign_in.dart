@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:innopolis_feedback/screens/authenticate/auth_layout.dart';
 import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
-import 'package:innopolis_feedback/shared/styles.dart';
+import 'package:innopolis_feedback/ui/action_button.dart';
+import 'package:innopolis_feedback/ui/text_form_field.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;
@@ -22,81 +24,70 @@ class _SignInState extends State<SignIn> {
   String email = '';
   String password = '';
 
+  Future<void> handleLogin() async {
+    if (_formKey.currentState.validate()) {
+      setState(() => loading = true);
+      dynamic result = await _auth.signIn(email, password);
+      if (result == null) {
+        setState(
+          () {
+            loading = false;
+            error = 'Could not sign in with those credentials';
+          },
+        );
+      }
+    }
+  }
+
+  // TODO: add live form validation
+
   @override
   Widget build(BuildContext context) {
     return loading
         ? Loading()
-        : Scaffold(
-            backgroundColor: Colors.brown[100],
-            appBar: AppBar(
-              backgroundColor: Colors.brown[400],
-              elevation: 0.0,
-              title: Text('Sign in to Innopolis Feedback'),
-              actions: <Widget>[
-                FlatButton.icon(
-                  icon: Icon(Icons.person),
-                  label: Text('Sign up?'),
-                  onPressed: () => widget.toggleView(),
-                ),
-              ],
-            ),
-            body: Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      decoration:
-                          textInputDecoration.copyWith(hintText: 'email'),
-                      validator: (val) => val.isEmpty ? 'Enter an email' : null,
-                      onChanged: (val) {
-                        setState(() => email = val);
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      obscureText: true,
-                      decoration:
-                          textInputDecoration.copyWith(hintText: 'password'),
-                      validator: (val) => val.length < 6
-                          ? 'Enter a password 6+ chars long'
-                          : null,
-                      onChanged: (val) {
-                        setState(() => password = val);
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    RaisedButton(
-                        color: Colors.pink[400],
-                        child: Text(
-                          'Sign In',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          if (_formKey.currentState.validate()) {
-                            setState(() => loading = true);
-                            dynamic result =
-                                await _auth.signIn(email, password);
-                            if (result == null) {
-                              setState(() {
-                                loading = false;
-                                error =
-                                    'Could not sign in with those credentials';
-                              });
-                            }
-                          }
-                        }),
-                    SizedBox(height: 12.0),
+        : new AuthLayout(
+            form: Form(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+                  if (error != '')
                     Text(
                       error,
-                      style: TextStyle(color: Colors.red, fontSize: 14.0),
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 14.0,
+                      ),
                     ),
-                  ],
-                ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  CustomTextFormField(
+                    placeholder: 'Email',
+                    validator: (val) => val.isEmpty ? 'Enter an email' : null,
+                    onChanged: (val) {
+                      setState(() => email = val);
+                    },
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  CustomTextFormField(
+                    obscureText: true,
+                    placeholder: 'Password',
+                    validator: (val) => val.length < 6
+                        ? 'Enter a password 6+ chars long'
+                        : null,
+                    onChanged: (val) {
+                      setState(() => password = val);
+                    },
+                  ),
+                ],
               ),
             ),
+            actionButton: ActionButton(text: 'Login', onPressed: handleLogin),
+            onToggleView: widget.toggleView,
+            toggleViewButtonText: 'Register',
+            toggleViewHelpingText: 'Don’t have an account yet?',
           );
   }
 }
