@@ -9,11 +9,6 @@ class Year {
   Year(this.name, this.id);
 
   @override
-  String toString() {
-    return "Year(id: $id, name: $name)";
-  }
-
-  @override
   bool operator ==(Object other) {
     try {
       // ignore: test_types_in_equals
@@ -33,11 +28,6 @@ class Course {
   String yearId;
 
   Course(this.name, this.id, this.yearId);
-
-  @override
-  String toString() {
-    return "Course(id: $id, name: $name, yearId: $yearId)";
-  }
 
   @override
   bool operator ==(Object other) {

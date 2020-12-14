@@ -144,29 +144,28 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget taItemBuilder(TA ta) {
     if (isAdmin) {
       return Builder(
-        builder: (context) =>
-            ListTile(
-                title: Text(ta.name),
-                onTap: () => selectTA(ta),
-                trailing: trailingPopupMenu(ta, "TA", ta.name, () async {
-                  await deleteTA(ta.id);
-                }, () async {
-                  await selectCourse(selectedCourse);
-                }, () async {
-                  final result = tryCast<bool>(
-                      await Navigator.push(context,
+        builder: (context) => ListTile(
+            title: Text(ta.name),
+            onTap: () => selectTA(ta),
+            trailing: trailingPopupMenu(ta, "TA", ta.name, () async {
+              await deleteTA(ta.id);
+            }, () async {
+              await selectCourse(selectedCourse);
+            }, () async {
+              final result = tryCast<bool>(
+                  await Navigator.push(
+                          context,
                           MaterialPageRoute(
                               builder: (context) => EditTA(ta))) ??
-                          false,
-                      fallback: false);
-                  if (result) {
-                    showSuccessSnackBar(context, "TA successfully edited!");
-                  }
-                  if (selectedCourse != null) {
-                    await selectCourse(selectedCourse);
-                  }
-                })
-            ),
+                      false,
+                  fallback: false);
+              if (result) {
+                showSuccessSnackBar(context, "TA successfully edited!");
+              }
+              if (selectedCourse != null) {
+                await selectCourse(selectedCourse);
+              }
+            })),
       );
     } else {
       return ListTile(
@@ -397,14 +396,14 @@ T tryCast<T>(dynamic x, {T fallback}) {
 }
 
 void showSuccessSnackBar(BuildContext context, String message) {
-  Scaffold.of(context)
+  ScaffoldMessenger.of(context)
     ..removeCurrentSnackBar()
     ..showSnackBar(
         SnackBar(backgroundColor: ColorsStyle.success, content: Text(message)));
 }
 
 void showErrorSnackBar(BuildContext context, String message, String error) {
-  Scaffold.of(context)
+  ScaffoldMessenger.of(context)
     ..removeCurrentSnackBar()
     ..showSnackBar(SnackBar(
         duration: Duration(seconds: 6),
