@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class Logo extends Image {
-  Logo({bool dark, double height})
+  Logo({bool dark = false, double height = 100})
       : super(
-          height: height ?? 100,
+          height: height,
           image: AssetImage(
-              dark ?? false ? 'images/logo-dark.png' : 'images/logo-light.png'),
+              dark ? 'images/logo-dark.png' : 'images/logo-light.png'),
         );
 }
