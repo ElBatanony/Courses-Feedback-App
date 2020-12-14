@@ -29,7 +29,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
   handleSubmitFeedback() async {
     // TODO: show a confirmation message (ex: Are you sure?)
     StudentFeedback f = new StudentFeedback('', widget.taCourse.taId,
-        widget.taCourse.courseId, controller.text, uid, email, [], []);
+        widget.taCourse.courseId, controller.text, uid, email, [], [], 0);
     await submitFeedback(f, isAnonymous);
     controller.text = '';
     setState(() {
@@ -162,29 +162,29 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
 
   Future<bool> areYouSure(String title, String message) async {
     return await showDialog<bool>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              child: Text('Yes'),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-            TextButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-            ),
-          ],
-        );
-      },
-    ) ??
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(title),
+              content: Text(message),
+              actions: [
+                TextButton(
+                  child: Text('Yes'),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                TextButton(
+                  child: Text('No'),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
+            );
+          },
+        ) ??
         false;
   }
 
@@ -233,80 +233,75 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
             ),
             (isAdmin)
                 ? ListTile(
-              leading: Icon(Icons.delete_sweep),
-              title: Text('Delete all from user'),
-              onTap: () async {
-                var itemType = "Feedback";
-                Student student;
-                try {
-                  student = await getStudentById(f.uid);
-                  if (await areYouSure("Delete all feedback from user",
-                      "Are you sure you want to delete all feedback left here from this user?")) {
-                    await deleteFeedbackByStudentInTaCourse(
-                        f.uid, f.courseId, f.taId);
-                    showSuccessSnackBar(context,
-                        "All $itemType from ${student
-                            .name} successfully deleted!");
-                  }
-                } catch (e, p) {
-                  print(e.toString() + ' ' + p.toString());
-                  if (e.toString().contains("] ")) {
-                    showErrorSnackBar(
-                        context,
-                        "Unable to delete $itemType from ${student.name ??
-                            "User"}.",
-                        e.toString().split("] ")[1]);
-                  } else {
-                    showErrorSnackBar(
-                        context,
-                        "Unable to delete $itemType from ${student.name ??
-                            "User"}.",
-                        e.toString());
-                  }
-                }
-                await fetchFeedback();
-                Navigator.pop(context);
-              },
-            )
+                    leading: Icon(Icons.delete_sweep),
+                    title: Text('Delete all from user'),
+                    onTap: () async {
+                      var itemType = "Feedback";
+                      Student student;
+                      try {
+                        student = await getStudentById(f.uid);
+                        if (await areYouSure("Delete all feedback from user",
+                            "Are you sure you want to delete all feedback left here from this user?")) {
+                          await deleteFeedbackByStudentInTaCourse(
+                              f.uid, f.courseId, f.taId);
+                          showSuccessSnackBar(context,
+                              "All $itemType from ${student.name} successfully deleted!");
+                        }
+                      } catch (e, p) {
+                        print(e.toString() + ' ' + p.toString());
+                        if (e.toString().contains("] ")) {
+                          showErrorSnackBar(
+                              context,
+                              "Unable to delete $itemType from ${student.name ?? "User"}.",
+                              e.toString().split("] ")[1]);
+                        } else {
+                          showErrorSnackBar(
+                              context,
+                              "Unable to delete $itemType from ${student.name ?? "User"}.",
+                              e.toString());
+                        }
+                      }
+                      await fetchFeedback();
+                      Navigator.pop(context);
+                    },
+                  )
                 : Container(),
             (isAdmin)
                 ? ListTile(
-              leading: Icon(Icons.person_remove),
-              title: Text('Delete user'),
-              onTap: () async {
-                var itemType = "User";
-                Student student;
-                try {
-                  student = await getStudentById(f.uid);
-                  if (f.uid == _auth.getCurrentUserId()) {
-                    throw Exception("You can't delete yourself");
-                  }
-                  if (await areYouSure("Delete user",
-                      "Are you sure you want to delete this user and all related feedback?")) {
-                    await deleteStudent(f.uid);
-                    showSuccessSnackBar(context,
-                        "$itemType '${student.name}' successfully deleted!");
-                  }
-                } catch (e, p) {
-                  print(e.toString() + ' ' + p.toString());
-                  if (e.toString().contains("] ")) {
-                    showErrorSnackBar(
-                        context,
-                        "Unable to delete $itemType '${student.name ??
-                            "username"}'.",
-                        e.toString().split("] ")[1]);
-                  } else {
-                    showErrorSnackBar(
-                        context,
-                        "Unable to delete $itemType '${student.name ??
-                            "username"}'.",
-                        e.toString());
-                  }
-                }
-                await fetchFeedback();
-                Navigator.pop(context);
-              },
-            )
+                    leading: Icon(Icons.person_remove),
+                    title: Text('Delete user'),
+                    onTap: () async {
+                      var itemType = "User";
+                      Student student;
+                      try {
+                        student = await getStudentById(f.uid);
+                        if (f.uid == _auth.getCurrentUserId()) {
+                          throw Exception("You can't delete yourself");
+                        }
+                        if (await areYouSure("Delete user",
+                            "Are you sure you want to delete this user and all related feedback?")) {
+                          await deleteStudent(f.uid);
+                          showSuccessSnackBar(context,
+                              "$itemType '${student.name}' successfully deleted!");
+                        }
+                      } catch (e, p) {
+                        print(e.toString() + ' ' + p.toString());
+                        if (e.toString().contains("] ")) {
+                          showErrorSnackBar(
+                              context,
+                              "Unable to delete $itemType '${student.name ?? "username"}'.",
+                              e.toString().split("] ")[1]);
+                        } else {
+                          showErrorSnackBar(
+                              context,
+                              "Unable to delete $itemType '${student.name ?? "username"}'.",
+                              e.toString());
+                        }
+                      }
+                      await fetchFeedback();
+                      Navigator.pop(context);
+                    },
+                  )
                 : Container(),
           ],
         );
@@ -342,14 +337,14 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
                 var f = feedbackList[index];
                 bool upvoted = f.upvotes.contains(email);
                 bool downvoted = f.downvotes.contains(email);
-                // TODO: display a negative or toxic warning depending on the sentiment of the feedback
+                String message = f.message;
+                if (f.sentimentScore < -0.2) message = 'TOXIC: ' + message;
                 return ListTile(
+                  tileColor: f.isToxic() ? Colors.red : Colors.white,
                   title: Text(f.email),
                   subtitle: Text(f.message),
-                  onTap: () =>
-                      Navigator.push(context,
-                          MaterialPageRoute(
-                              builder: (context) => FeedbackPage(f))),
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => FeedbackPage(f))),
                   onLongPress: (f.uid == uid || isAdmin)
                       ? () => handleFeedbackLongPress(context, f)
                       : null,
