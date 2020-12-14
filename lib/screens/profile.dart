@@ -49,7 +49,9 @@ class _ProfileState extends State<Profile> {
                 ],
               ),
             ),
-            bottomNavigationBar: BottomNavBar(),
+            bottomNavigationBar: BottomNavBar(
+              defaultSelectedIndex: 1,
+            ),
           );
   }
 }
