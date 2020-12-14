@@ -28,16 +28,13 @@ class AuthLayout extends StatelessWidget {
           30,
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Expanded(
-              flex: 0,
-              child: Logo(
-                dark: true,
-                height: MediaQuery.of(context).size.height * 0.135,
-              ),
+            Logo(
+              dark: true,
+              height: MediaQuery.of(context).size.height * 0.135,
             ),
             Expanded(
-              flex: 1,
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
@@ -47,42 +44,38 @@ class AuthLayout extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(
-              flex: 0,
-              child: Column(
-                // crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Container(
-                    width: double.infinity,
-                    child: actionButton,
+            Column(
+              children: <Widget>[
+                Container(
+                  width: double.infinity,
+                  child: actionButton,
+                ),
+                SizedBox(height: 20),
+                FlatButton(
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                  child: Column(
+                    children: [
+                      Text(
+                        toggleViewHelpingText,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        toggleViewButtonText,
+                        style: TextStyle(
+                          color: Colors.deepPurple[500],
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 20),
-                  FlatButton(
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                    child: Column(
-                      children: [
-                        Text(
-                          toggleViewHelpingText,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontWeight: FontWeight.normal),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          toggleViewButtonText,
-                          style: TextStyle(
-                            color: Colors.deepPurple[500],
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ],
-                    ),
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onPressed: () => onToggleView(),
-                  )
-                ],
-              ),
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onPressed: () => onToggleView(),
+                )
+              ],
             ),
           ],
         ),
