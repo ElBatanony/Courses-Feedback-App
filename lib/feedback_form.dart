@@ -323,7 +323,7 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
                   tileColor: f.isToxic()
                       ? Color.fromRGBO(255, 0, 0, 0.15)
                       : Colors.white,
-                  title: Text(f.email),
+                  title: Text(f.email.split('@')[0]),
                   subtitle: Text(f.message),
                   onTap: () => Navigator.push(context,
                       MaterialPageRoute(builder: (context) => FeedbackPage(f))),
