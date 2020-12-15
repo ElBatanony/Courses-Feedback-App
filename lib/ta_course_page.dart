@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:innopolis_feedback/feedback_form.dart';
 import 'package:innopolis_feedback/shared/bottom_navbar.dart';
+import 'package:innopolis_feedback/shared/loading.dart';
 import 'package:innopolis_feedback/shared/resend_verifivaction_mail.dart';
 import 'package:innopolis_feedback/ui/action_button.dart';
 import 'package:innopolis_feedback/ui/app_bar.dart';
@@ -67,7 +68,7 @@ class _TaCoursePageState extends State<TaCoursePage> {
       body: Center(
         child: taCourse == null
             ? course == null
-                ? Text('Loading ...')
+                ? Loading()
                 : Text('TA Course pair doc does not exist')
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
