@@ -36,12 +36,14 @@ class _ProfileState extends State<Profile> {
 
   taToWidget(TA ta) => ListItem(
         title: ta.name,
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TaProfilePage(ta.id, ta.name),
-          ),
-        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TaProfilePage(ta.id, ta.name),
+            ),
+          );
+        },
       );
 
   @override

@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/services/database.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
+import 'package:innopolis_feedback/ui/action_button.dart';
 import 'package:innopolis_feedback/ui/app_bar.dart';
+import 'package:innopolis_feedback/ui/sub_title.dart';
 
 import 'data.dart';
 import 'ta_course_page.dart';
@@ -52,12 +54,16 @@ class _TaProfilePageState extends State<TaProfilePage> {
             builder: (context) => TaCoursePage(title, ta.id, course.id)));
   }
 
-  @override
-  void initState() {
-    getTA();
+  init() async {
+    await getTA();
     uid = FirebaseAuth.instance.currentUser.uid;
     db = DatabaseService(uid);
-    getStudent();
+    await getStudent();
+  }
+
+  @override
+  void initState() {
+    init();
     super.initState();
   }
 
@@ -69,38 +75,33 @@ class _TaProfilePageState extends State<TaProfilePage> {
       ),
       body: Center(
         child: ta != null
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        children: [
-                          Text('ID: ' + ta.id),
-                          Text('Name: ' + ta.name),
-                          Text('Rating: unimplemented/5'),
-                        ],
-                      ),
-                      IconButton(
-                          icon: Icon(isFavorite
-                              ? Icons.favorite
-                              : Icons.favorite_border),
-                          onPressed: () async {
-                            isFavorite
-                                ? student.favoriteTAs.remove(ta.id)
-                                : student.favoriteTAs.add(ta.id);
-                            await db.updateStudent(
-                                favoriteTAs: student.favoriteTAs);
-                            setState(() {
-                              isFavorite = student.isFavoriteTa(ta.id);
-                            });
-                          })
-                    ],
-                  ),
-                  displayCourses(courses, selectCourse),
-                  displayIssues(ta)
-                ],
+            ? Padding(
+                padding: EdgeInsets.all(30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: displayCourses(courses, selectCourse),
+                    ),
+                    ActionButton(
+                      icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border),
+                      text:
+                          '${isFavorite ? 'Remove from' : 'Add to'} favourites',
+                      onPressed: () async {
+                        isFavorite
+                            ? student.favoriteTAs.remove(ta.id)
+                            : student.favoriteTAs.add(ta.id);
+                        await db.updateStudent(
+                            favoriteTAs: student.favoriteTAs);
+                        setState(() {
+                          isFavorite = student.isFavoriteTa(ta.id);
+                        });
+                      },
+                    ),
+                  ],
+                ),
               )
             : Loading(),
       ),
@@ -109,18 +110,17 @@ class _TaProfilePageState extends State<TaProfilePage> {
 }
 
 Widget displayCourses(List<Course> courses, Function selectCourse) {
-  return Column(children: [
-    Text('Courses:'),
-    ...courses
-        .map((course) => ListTile(
-              title: Text(course.name),
-              subtitle: Text(course.yearId),
-              onTap: () => selectCourse(course),
-            ))
-        .toList()
-  ]);
-}
-
-Widget displayIssues(TA ta) {
-  return Text('Issues are yet to be implemented');
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      SubTitle('Courses:'),
+      ...courses
+          .map((course) => ListTile(
+                title: Text(course.name),
+                subtitle: Text(course.yearId),
+                onTap: () => selectCourse(course),
+              ))
+          .toList()
+    ],
+  );
 }

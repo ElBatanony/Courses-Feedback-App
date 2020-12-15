@@ -4,6 +4,7 @@ import 'package:innopolis_feedback/data.dart';
 import 'package:innopolis_feedback/shared/resend_verifivaction_mail.dart';
 import 'package:innopolis_feedback/shared/styles.dart';
 import 'package:innopolis_feedback/ui/app_bar.dart';
+import 'package:innopolis_feedback/ui/sub_title.dart';
 
 class FeedbackPage extends StatefulWidget {
   final StudentFeedback f;
@@ -81,14 +82,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
         children: [
           Padding(
             padding: EdgeInsets.fromLTRB(15, 15, 0, 0),
-            child: Text(
-              'Feedback',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
-              ),
-            ),
+            child: SubTitle('Feedback'),
           ),
           Padding(
             padding: EdgeInsets.all(15),
@@ -103,14 +97,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
           SizedBox(height: 10),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            child: Text(
-              'Comments',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
-              ),
-            ),
+            child: SubTitle('Comments'),
           ),
           emailVerified
               ? Container(
