@@ -80,12 +80,35 @@ class _FeedbackPageState extends State<FeedbackPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
+            padding: EdgeInsets.fromLTRB(15, 15, 0, 0),
+            child: Text(
+              'Feedback',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+              ),
+            ),
+          ),
+          Padding(
             padding: EdgeInsets.all(15),
             child: Card(
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text(widget.f.message),
+              ),
+            ),
+          ),
+          SizedBox(height: 10),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+            child: Text(
+              'Comments',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
               ),
             ),
           ),
@@ -112,24 +135,17 @@ class _FeedbackPageState extends State<FeedbackPage> {
                   ),
                 )
               : ResendVerificationEmail(user),
-          SizedBox(height: 10),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            child: Text(
-              'Comments:',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-                itemCount: comments.length,
-                itemBuilder: (context, index) =>
-                    commentToWidget(comments[index])),
-          ),
+          comments.length > 0
+              ? Expanded(
+                  child: ListView.builder(
+                      itemCount: comments.length,
+                      itemBuilder: (context, index) =>
+                          commentToWidget(comments[index])),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Text('No comments added yet.'),
+                ),
         ],
       ),
     );
