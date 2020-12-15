@@ -2,7 +2,7 @@
     package="app.innopolis.feedback">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="innopolis_feedback"
+        android:label="Innopolis Feedback"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
