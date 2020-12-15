@@ -90,22 +90,25 @@ class _FeedbackPageState extends State<FeedbackPage> {
             ),
           ),
           emailVerified
-              ? TextField(
-                  controller: commentHolder,
-                  maxLines: null,
-                  onChanged: (val) {
-                    setState(() {
-                      commentText = val;
-                    });
-                  },
-                  decoration: textInputDecoration.copyWith(
-                    hintText: 'Comment',
-                    suffixIcon: commentText != ''
-                        ? IconButton(
-                            onPressed: submitCommentHandler,
-                            icon: Icon(Icons.send),
-                          )
-                        : SizedBox.shrink(),
+              ? Container(
+                  padding: EdgeInsets.all(15),
+                  child: TextField(
+                    controller: commentHolder,
+                    maxLines: null,
+                    onChanged: (val) {
+                      setState(() {
+                        commentText = val;
+                      });
+                    },
+                    decoration: textInputDecoration.copyWith(
+                      hintText: 'Leave a comment ...',
+                      suffixIcon: commentText != ''
+                          ? IconButton(
+                              onPressed: submitCommentHandler,
+                              icon: Icon(Icons.send),
+                            )
+                          : SizedBox.shrink(),
+                    ),
                   ),
                 )
               : ResendVerificationEmail(user),
