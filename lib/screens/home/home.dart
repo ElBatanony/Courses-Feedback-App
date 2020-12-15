@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   selectTA(TA ta) {
     print('Selected TA: ' + ta.name);
-    String title = ta.name + ' - ' + selectedCourse.name;
+    String title = ta.name;
     Navigator.push(
         context,
         MaterialPageRoute(

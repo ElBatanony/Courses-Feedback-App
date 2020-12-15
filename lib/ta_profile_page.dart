@@ -45,7 +45,7 @@ class _TaProfilePageState extends State<TaProfilePage> {
   }
 
   selectCourse(Course course) async {
-    String title = ta.name + ' - ' + course.name;
+    String title = ta.name;
     await Navigator.push(
         context,
         MaterialPageRoute(
