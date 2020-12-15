@@ -320,7 +320,11 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
         appBar: CustomAppBar(
-          title: 'TA Feedback',
+          title: selectedCourse != null
+              ? 'Select instructor'
+              : selectedYear != null
+                  ? 'Select course'
+                  : 'TA Feedback',
           goBackIconVisible: selectedYear != null || selectedCourse != null,
           onGoBack: goBack,
         ),
