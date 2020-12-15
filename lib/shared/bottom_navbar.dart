@@ -18,13 +18,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget build(BuildContext context) {
     //Question - in case of PUSH stack will be too big(if pressing profile->courses->profile...) Maybe better replace?
     void goToCourses() {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => MyHomePage()));
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => MyHomePage()), (_) => false);
     }
 
     void goToProfile() {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Profile()));
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => Profile()), (_) => false);
     }
 
     void _onItemTapped(int index) {

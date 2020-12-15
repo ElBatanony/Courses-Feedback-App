@@ -64,11 +64,7 @@ class _ProfileState extends State<Profile> {
     return loading
         ? Loading()
         : Scaffold(
-            appBar: CustomAppBar(
-              title: student.name,
-              goBackIconVisible: true,
-              onGoBack: () => Navigator.pop(context),
-            ),
+            appBar: CustomAppBar(title: student.name),
             body: Center(
               child: Padding(
                 padding: const EdgeInsets.all(30.0),
