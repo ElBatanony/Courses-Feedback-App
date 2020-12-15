@@ -1,4 +1,4 @@
-package com.example.innopolis_feedback
+package app.innopolis.feedback
 
 import io.flutter.embedding.android.FlutterActivity
 
