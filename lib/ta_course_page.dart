@@ -131,7 +131,7 @@ class _TaCoursePageState extends State<TaCoursePage> {
                                 ),
                                 Flexible(
                                   child: Text(
-                                    '${taCourse.avgRating.toStringAsFixed(2)} / 5',
+                                    '${taCourse.avgRating.toStringAsFixed(1)} / 5',
                                   ),
                                 )
                               ],

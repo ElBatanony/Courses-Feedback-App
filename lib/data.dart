@@ -78,6 +78,7 @@ class TaCourse {
       ratingsCount += ratings[i];
       sumRatings += (i + 1) * ratings[i];
     }
+    if (ratingsCount == 0) ratingsCount = 1;
     avgRating = sumRatings / ratingsCount;
   }
 
