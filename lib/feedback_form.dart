@@ -5,6 +5,7 @@ import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/screens/feedback_page.dart';
 
 import 'data.dart';
+import 'shared/styles.dart';
 
 class FeedbackForm extends StatefulWidget {
   final TaCourse taCourse;
@@ -46,27 +47,38 @@ class _FeedbackFormState extends State<FeedbackForm> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(15),
-      child: Column(
-        children: [
-          TextField(
-            controller: controller,
-            decoration: InputDecoration(
-                hintText: 'Your feedback message', labelText: 'Feedback'),
-          ),
-          SwitchListTile(
-            title: Text('Anonymous feedback'),
-            value: isAnonymous,
-            onChanged: (value) {
-              setState(() {
-                isAnonymous = value;
-              });
-            },
-          ),
-          RaisedButton(
-            child: Text('Submit Feedback'),
-            onPressed: handleSubmitFeedback,
-          )
-        ],
+      child: Container(
+        padding: EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(2),
+          boxShadow: [BoxShadow(blurRadius: 3, color: Colors.grey)],
+        ),
+        child: Column(
+          children: [
+            TextField(
+                controller: controller,
+                maxLines: null,
+                decoration: textInputDecoration.copyWith(
+                  hintText: 'Leave a feedback ...',
+                ) //InputDecoration(hintText: 'Your feedback message'),
+                ),
+            SwitchListTile(
+              title: Text('Anonymous feedback'),
+              value: isAnonymous,
+              onChanged: (value) {
+                setState(() {
+                  isAnonymous = value;
+                });
+              },
+            ),
+            RaisedButton(
+                child: Text('Submit Feedback'),
+                onPressed: handleSubmitFeedback,
+                textColor: Colors.white,
+                color: Colors.deepPurple[500])
+          ],
+        ),
       ),
     );
   }
