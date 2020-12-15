@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/ui/text_form_field.dart';
 import 'package:innopolis_feedback/screens/authenticate/auth_layout.dart';
@@ -31,7 +30,7 @@ class _SignUpState extends State<SignUp> {
   Future<void> handleRegister() async {
     if (_formKey.currentState.validate()) {
       setState(() => loading = true);
-      User user = await _auth.signUp(email, password, name);
+      var user = await _auth.signUp(email, password, name);
       if (user == null) {
         setState(() {
           loading = false;
