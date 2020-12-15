@@ -325,57 +325,67 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
               showErrorSnackBar(context, "Failed fetching user role", "");
             }
 
-            return ListView.builder(
-              itemCount: feedbackList.length,
-              itemBuilder: (listContext, index) {
-                var f = feedbackList[index];
-                bool upvoted = f.upvotes.contains(email);
-                bool downvoted = f.downvotes.contains(email);
-                return ListTile(
-                  tileColor: f.isToxic()
-                      ? Color.fromRGBO(255, 0, 0, 0.15)
-                      : Colors.white,
-                  title: Text(f.email.split('@')[0]),
-                  subtitle: Text(f.message),
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => FeedbackPage(f))),
-                  onLongPress: (f.uid == uid || isAdmin)
-                      ? () => handleFeedbackLongPress(context, f)
-                      : null,
-                  leading: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: upvoted ? Colors.deepPurple[100] : null),
-                    constraints: BoxConstraints(maxWidth: 72),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(f.upvotes.length.toString()),
-                          IconButton(
-                            icon: Icon(Icons.arrow_upward),
-                            onPressed: () => handleUpvote(f),
-                          )
-                        ]),
-                  ),
-                  trailing: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: downvoted ? Colors.red[200] : null,
-                    ),
-                    constraints: BoxConstraints(maxWidth: 72),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(f.downvotes.length.toString()),
-                        IconButton(
-                          icon: Icon(Icons.arrow_downward),
-                          onPressed: () => handleDownvote(f),
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(2),
+                  boxShadow: [BoxShadow(blurRadius: 3, color: Colors.grey)],
+                ),
+                child: ListView.builder(
+                  itemCount: feedbackList.length,
+                  itemBuilder: (listContext, index) {
+                    var f = feedbackList[index];
+                    bool upvoted = f.upvotes.contains(email);
+                    bool downvoted = f.downvotes.contains(email);
+                    return ListTile(
+                      tileColor: f.isToxic()
+                          ? Color.fromRGBO(255, 0, 0, 0.15)
+                          : Colors.white,
+                      title: Text(f.email.split('@')[0]),
+                      subtitle: Text(f.message),
+                      onTap: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => FeedbackPage(f))),
+                      onLongPress: (f.uid == uid || isAdmin)
+                          ? () => handleFeedbackLongPress(context, f)
+                          : null,
+                      leading: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: upvoted ? Colors.deepPurple[100] : null),
+                        constraints: BoxConstraints(maxWidth: 72),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(f.upvotes.length.toString()),
+                              IconButton(
+                                icon: Icon(Icons.arrow_upward),
+                                onPressed: () => handleUpvote(f),
+                              )
+                            ]),
+                      ),
+                      trailing: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: downvoted ? Colors.red[200] : null,
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+                        constraints: BoxConstraints(maxWidth: 72),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(f.downvotes.length.toString()),
+                            IconButton(
+                              icon: Icon(Icons.arrow_downward),
+                              onPressed: () => handleDownvote(f),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             );
           }),
     );
