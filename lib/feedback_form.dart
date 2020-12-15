@@ -319,10 +319,10 @@ class _FeedbackDisplayState extends State<FeedbackDisplay> {
                 var f = feedbackList[index];
                 bool upvoted = f.upvotes.contains(email);
                 bool downvoted = f.downvotes.contains(email);
-                String message = f.message;
-                if (f.sentimentScore < -0.2) message = 'TOXIC: ' + message;
                 return ListTile(
-                  tileColor: f.isToxic() ? Color.fromRGBO(255, 0, 0, 0.15) : Colors.white,
+                  tileColor: f.isToxic()
+                      ? Color.fromRGBO(255, 0, 0, 0.15)
+                      : Colors.white,
                   title: Text(f.email),
                   subtitle: Text(f.message),
                   onTap: () => Navigator.push(context,
