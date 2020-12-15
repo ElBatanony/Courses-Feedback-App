@@ -7,19 +7,24 @@ class ResendVerificationEmail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Column(
-        children: [
-          Text(
-            'You need to verify you account to act on this page',
-            style: TextStyle(color: Colors.red),
-          ),
-          RaisedButton(
-            child: Text('Resend verification mail'),
-            onPressed: user.sendEmailVerification,
-          )
-        ],
+    return Container(
+      color: Colors.deepPurple[50],
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          children: [
+            Text(
+              'You need to verify your account to act on this page',
+              style: TextStyle(color: Colors.deepPurple[500]),
+            ),
+            RaisedButton(
+              color: Colors.deepPurple[100],
+              textColor: Colors.deepPurple[900],
+              child: Text('Resend verification email'),
+              onPressed: user.sendEmailVerification,
+            )
+          ],
+        ),
       ),
     );
   }

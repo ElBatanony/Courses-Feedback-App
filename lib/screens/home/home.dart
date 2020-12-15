@@ -5,6 +5,7 @@ import 'package:innopolis_feedback/screens/addTA.dart';
 import 'package:innopolis_feedback/screens/editTA.dart';
 import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/shared/FloatingActionButtonMenu.dart';
+import 'package:innopolis_feedback/shared/bottom_navbar.dart';
 import 'package:innopolis_feedback/shared/loading.dart';
 import 'package:innopolis_feedback/shared/styles.dart';
 import 'package:innopolis_feedback/ta_course_page.dart';
@@ -66,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   selectTA(TA ta) {
     print('Selected TA: ' + ta.name);
-    String title = ta.name + ' - ' + selectedCourse.name;
+    String title = ta.name;
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -318,18 +319,17 @@ class _MyHomePageState extends State<MyHomePage> {
             return Loading();
           },
         ),
-        backgroundColor: Colors.white,
         appBar: CustomAppBar(
-          title: 'TA Feedback',
-          actions: <Widget>[
-            FlatButton.icon(
-              icon: Icon(Icons.person),
-              label: Text('Sign out?'),
-              onPressed: () => AuthService().signOut(),
-            ),
-          ],
+          title: selectedCourse != null
+              ? 'Select instructor'
+              : selectedYear != null
+                  ? 'Select course'
+                  : 'TA Feedback',
           goBackIconVisible: selectedYear != null || selectedCourse != null,
           onGoBack: goBack,
+        ),
+        bottomNavigationBar: BottomNavBar(
+          defaultSelectedIndex: 0,
         ),
         body: Column(
           children: [
@@ -344,7 +344,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       currentBuilder = yearItemBuilder;
                     }
                     return ListView.builder(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 15,
+                        ),
                         itemCount: currentList.length,
                         itemBuilder: (context, index) =>
                             currentBuilder(currentList[index]));

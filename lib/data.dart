@@ -78,6 +78,7 @@ class TaCourse {
       ratingsCount += ratings[i];
       sumRatings += (i + 1) * ratings[i];
     }
+    if (ratingsCount == 0) ratingsCount = 1;
     avgRating = sumRatings / ratingsCount;
   }
 
@@ -348,7 +349,7 @@ Stream<List<StudentFeedback>> getFeedback(TaCourse taCourse) {
           feedbackData['email'],
           toStringList(feedbackData['upvotes'] ?? []),
           toStringList(feedbackData['downvotes'] ?? []),
-          sentimentObject['score'] ?? 0);
+          (sentimentObject['score'] ?? 0.0).toDouble());
       feedbackList.add(feedback);
     });
     return feedbackList;
