@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/data.dart';
+import 'package:innopolis_feedback/screens/wrapper.dart';
 import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/services/database.dart';
 import 'package:innopolis_feedback/shared/bottom_navbar.dart';
@@ -50,6 +51,13 @@ class _ProfileState extends State<Profile> {
   void initState() {
     user = FirebaseAuth.instance.currentUser;
     getStudent();
+
+    AuthService().user.listen((user) {
+      if (user == null)
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Wrapper()));
+    });
+
     super.initState();
   }
 
@@ -58,11 +66,7 @@ class _ProfileState extends State<Profile> {
     return loading
         ? Loading()
         : Scaffold(
-            appBar: CustomAppBar(
-              title: student.name,
-              goBackIconVisible: true,
-              onGoBack: () => Navigator.pop(context),
-            ),
+            appBar: CustomAppBar(title: student.name),
             body: Center(
               child: Padding(
                 padding: const EdgeInsets.all(30.0),
