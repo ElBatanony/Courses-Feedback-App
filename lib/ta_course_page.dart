@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:innopolis_feedback/feedback_form.dart';
 import 'package:innopolis_feedback/shared/bottom_navbar.dart';
+import 'package:innopolis_feedback/shared/loading.dart';
 import 'package:innopolis_feedback/shared/resend_verifivaction_mail.dart';
 import 'package:innopolis_feedback/ui/action_button.dart';
 import 'package:innopolis_feedback/ui/app_bar.dart';
@@ -33,7 +34,10 @@ class _TaCoursePageState extends State<TaCoursePage> {
     ta = await getTaById(widget.taId);
     course = await getCourseById(widget.courseId);
     taCourse = await getTaCoursePair(ta.id, course.id);
-    selectedRating = await getRating(taCourse.docId, uid);
+    print(course);
+    try {
+      selectedRating = await getRating(taCourse.docId, uid);
+    } catch (e) {}
     setState(() {});
     print(ta.name + ' - ' + course.name);
   }
@@ -67,7 +71,7 @@ class _TaCoursePageState extends State<TaCoursePage> {
       body: Center(
         child: taCourse == null
             ? course == null
-                ? Text('Loading ...')
+                ? Loading()
                 : Text('TA Course pair doc does not exist')
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -144,30 +148,41 @@ class _TaCoursePageState extends State<TaCoursePage> {
                   emailVerified
                       ? Column(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text('Rating:'),
-                                DropdownButton<int>(
-                                  value: selectedRating,
-                                  onChanged: (int newValue) {
-                                    setState(() {
-                                      selectedRating = newValue;
-                                      updateRating(
-                                          taCourse.docId, uid, selectedRating);
-                                    });
-                                  },
-                                  items:
-                                      <int>[0, 1, 2, 3, 4, 5].map((int value) {
-                                    return DropdownMenuItem<int>(
-                                      value: value,
-                                      child: Text(value == 0
-                                          ? 'No rating'
-                                          : value.toString()),
-                                    );
-                                  }).toList(),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              child: Container(
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(2),
+                                  boxShadow: [BoxShadow(blurRadius: 3, color: Colors.grey)],
                                 ),
-                              ],
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text('Rating:'),
+                                    DropdownButton<int>(
+                                      value: selectedRating,
+                                      onChanged: (int newValue) {
+                                        setState(() {
+                                          selectedRating = newValue;
+                                          updateRating(
+                                              taCourse.docId, uid, selectedRating);
+                                        });
+                                      },
+                                      items:
+                                          <int>[0, 1, 2, 3, 4, 5].map((int value) {
+                                        return DropdownMenuItem<int>(
+                                          value: value,
+                                          child: Text(value == 0
+                                              ? 'No rating'
+                                              : value.toString()),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                             FeedbackForm(taCourse),
                           ],

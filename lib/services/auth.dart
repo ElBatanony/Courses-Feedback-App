@@ -26,15 +26,13 @@ class AuthService {
 
   Future signUp(String email, String password, String name) async {
     try {
-      return _auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((response) async {
-        await DatabaseService(response.user.uid).updateStudent(name: name);
-        return response.user;
-      });
+      UserCredential response = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      await DatabaseService(response.user.uid).updateStudent(name: name);
+      return response.user;
     } catch (error) {
       print(error.toString());
-      return error.toString();
+      return null;
     }
   }
 
