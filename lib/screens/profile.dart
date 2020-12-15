@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:innopolis_feedback/data.dart';
-import 'package:innopolis_feedback/screens/authenticate/authenticate.dart';
+import 'package:innopolis_feedback/screens/wrapper.dart';
 import 'package:innopolis_feedback/services/auth.dart';
 import 'package:innopolis_feedback/services/database.dart';
 import 'package:innopolis_feedback/shared/bottom_navbar.dart';
@@ -53,7 +53,7 @@ class _ProfileState extends State<Profile> {
     AuthService().user.listen((user) {
       if (user == null)
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Authenticate()));
+            context, MaterialPageRoute(builder: (context) => Wrapper()));
     });
 
     super.initState();
