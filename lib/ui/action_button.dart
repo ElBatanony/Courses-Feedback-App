@@ -15,11 +15,13 @@ class ActionButton extends FlatButton {
                   padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
                   child: icon,
                 ),
-              Text(
-                text.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 16,
-                  letterSpacing: 1.25,
+              Expanded(
+                child: Text(
+                  text.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 16,
+                    letterSpacing: 1.25,
+                  ),
                 ),
               ),
             ],
