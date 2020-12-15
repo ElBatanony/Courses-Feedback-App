@@ -71,7 +71,7 @@ class _TaProfilePageState extends State<TaProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'TA - ' + widget.taName,
+        title: widget.taName,
       ),
       body: Center(
         child: ta != null
@@ -113,11 +113,11 @@ Widget displayCourses(List<Course> courses, Function selectCourse) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      SubTitle('Courses:'),
+      SubTitle('Courses'),
       ...courses
           .map((course) => ListTile(
                 title: Text(course.name),
-                subtitle: Text(course.yearId),
+                subtitle: Text(course.yearId.toUpperCase()),
                 onTap: () => selectCourse(course),
               ))
           .toList()
