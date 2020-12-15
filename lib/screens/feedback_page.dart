@@ -73,7 +73,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: widget.f.email,
+        title: 'Comments',
       ),
       backgroundColor: Colors.grey[50],
       body: Column(
